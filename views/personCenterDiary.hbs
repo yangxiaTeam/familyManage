@@ -1,0 +1,50 @@
+<section class="content-header" id="delegate">
+  <button id="writeDiary" type="button" class="btn btn-block btn-primary" style="width: 100px; margin-bottom: 10px">写日记</button>
+  {{#each diaries}}
+  <div class="box">
+    <div class="box-header with-border">
+      <span class="box-title" style="margin-right: 15px;">{{title}}</span>
+      <span>{{time}}</span>
+      <div class="box-tools pull-right">
+        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+          <i class="fa fa-minus"></i></button>
+        <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+          <i class="fa fa-times js-delete" data-id={{id}}></i></button>
+      </div>
+    </div>
+    <div class="box-body" style="height: 300px; overflow-y: auto">
+      {{content}}
+    </div>
+    <!-- /.box-body -->
+    <div class="box-footer">     
+      <button id={{id}} type="button" class="btn btn-block btn-primary modify" style="width: 100px;margin: 0 auto;">修改</button>
+    </div>
+    <!-- /.box-footer-->
+  </div> 
+  {{/each}}
+</section>
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+{{!--<script src="/bootstrap/js/bootstrap.min.js"></script>--}}
+<script src="/plugins/iCheck/icheck.min.js"></script>
+<script>
+  $('#writeDiary').click(function() {
+    window.location.href= '/personCenter/diary/write';
+  });
+  $('#delegate').delegate('.modify', 'click', function(e) {
+    var target = $(e.target);
+    var id = target.attr('id');
+    window.location.href = '/personCenter/diary/modify?id='+id;
+  });
+  $('#delegate').delegate('.js-delete', 'click', function(e) {
+    var target = $(e.target);
+    var id = target.data('id');
+    console.log('id', id);
+    $.ajax({
+      url: 'http://127.0.0.1:3000/personCenter/diary/deleteDiary',
+      method: 'post',
+      data: {id: id},
+    });
+  })
+
+</script>
+ 

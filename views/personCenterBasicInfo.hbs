@@ -1,0 +1,152 @@
+<section class="content-header">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title">个人信息</h3>
+        </div>
+        <!-- /.box-header -->
+        {{#equals mode 'show'}} 
+        <div class="box-body">
+          <div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+            <div class="row"><div class="col-sm-12">
+              <table id="example2" class="table table-bordered table-hover dataTable" role="grid" aria-describedby="example2_info">
+                <tbody>                              
+                <tr role="row" class="odd">
+                  <td class="sorting_1">姓名</td>
+                  <td class="sorting_1">{{username}}</td>
+                  <td class="sorting_1">邮箱</td>
+                  <td class="sorting_1">{{useremail}}</td>                
+                </tr>
+                    {{#with user}} 
+                <tr role="row" class="even">
+                  <td class="sorting_1">性别</td>
+                  <td class="sorting_1">{{gender}}</td>
+                  <td class="sorting_1">电话</td>
+                  <td class="sorting_1">{{tel}}</td>
+                </tr>
+                <tr role="row" class="odd">
+                  <td class="sorting_1">身份证号码</td>
+                  <td class="sorting_1">{{certificationID}}</td>
+                  <td class="sorting_1">出生日期</td>
+                  <td class="sorting_1">{{birthday}}</td>
+                </tr>
+                <tr role="row" class="even">
+                  <td class="sorting_1">身高</td>
+                  <td class="sorting_1">{{height}}</td>
+                  <td class="sorting_1">体重</td>
+                  <td class="sorting_1">{{weight}}</td>
+                </tr>
+                <tr role="row" class="odd">
+                  <td class="sorting_1"> 年龄</td>
+                  <td class="sorting_1">{{age}}</td>
+                  <td class="sorting_1">职业</td>
+                  <td class="sorting_1">{{job}}</td>
+                </tr>
+                {{/with}}               
+                </tbody>
+              </table>
+            <div>
+            <button type="button" class="btn btn-block btn-primary btn-sm" style="width:10%; float:right;" onclick="window.location.href='/personCenter/basicInfo/edit'">编辑</button>
+            </div>
+          </div>
+        </div> 
+        {{/equals}} 
+        <!-- /.box-header -->
+        {{#equals mode 'edit'}}
+        <div class="box box-info">
+            <!-- /.box-header -->
+            <!-- form start -->
+            <div style="width: 60%; margin: 0 auto">
+            <form class="form-horizontal" action="/personCenter/basicInfo" method="post">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="username" class="col-sm-2 control-label">姓名</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="username" value="{{username}}" name="username">
+                  </div>
+                </div>
+                {{#with user}}
+                <div class="form-group">
+                  <label for="tel" class="col-sm-2 control-label">电话</label>
+                  <div class="col-sm-10">
+                    <input type="telephone" class="form-control" id="tel" value="{{tel}}" name="tel">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="gender" class="col-sm-2 control-label">性别</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="gender" value="{{gender}}" name="gender">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="certificationID" class="col-sm-2 control-label">身份证</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="certificationID" value="{{certificationID}}" name="certificationID">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="birthday" class="col-sm-2 control-label">出生日期</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="birthday" value="{{birthday}}" name="birthday">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="height" class="col-sm-2 control-label">身高</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="height" value="{{height}}" name="height">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="weight" class="col-sm-2 control-label">体重</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="weight" value="{{weight}}" name="weight">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="age" class="col-sm-2 control-label">年龄</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="age" value="{{age}}" name="age">
+                  </div>
+                </div>
+                 <div class="form-group">
+                  <label for="job" class="col-sm-2 control-label">职业</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="job" value="{{job}}" name="job">
+                  </div>
+                </div>
+                {{/with}}
+                {{!--<div class="form-group">
+                  <div class="col-sm-offset-2 col-sm-10">
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox"> Remember me
+                      </label>
+                    </div>
+                  </div>
+                </div>--}}
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer" style="border: none;text-align:right">
+                <button type="button" class="btn btn-default" id="cancel">取消</button>
+                <button type="submit" class="btn btn-info">确定</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+            </div>
+          </div>
+          {{/equals}}
+      </div>
+    </div>
+  </div>             
+</section>
+<!-- jQuery 2.2.3 -->
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+{{!--<!-- Bootstrap 3.3.6 -->
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<!-- iCheck -->--}}
+<script>
+    $('#cancel').click(function() {
+      history.back();
+    });
+</script>

@@ -1,0 +1,225 @@
+<section class="content certification">
+  <table class="table table-hover table-striped">
+    <thead>
+      <tr>
+        <th>证件照片</th>
+        <th>证件名称</th>
+        <th>证件备注</th>
+        <th>证件截止日期</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody id="certificationBody">
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" >添加新的证件信息</button>
+
+      {{#each certification}}
+        <tr>
+          <td><img src="{{src}}" class="pic"></td>
+          <td>{{name}}</td>
+          <td>{{description}}</td>
+          <td>{{deadtime}}</td>
+          <td>
+            <button class="btn btn-primary CertificaionDelete" data-id="{{id}}" id="del-certification">删除</button>
+            <button class="btn btn-primary modify-certification" id="modify-certification" data-toggle="modal" data-target="#updateModal"  data-id="{{id}}" data-name="{{name}}" data-description="{{description}}" data-deadtime="{{deadtime}}">修改</button>
+          </td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+
+        
+
+</section>
+
+<!-- 添加模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">添加新的证件信息</h4>
+            </div>
+            <div class="modal-body">
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form role="form">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="certificationName">证件名称</label>
+                  <input type="text" class="form-control" id="certificationNameInput" placeholder="证件名称">
+                </div>
+                <div class="form-group">
+                  <label for="certificationDesc">证件备注</label>
+                  <input type="text" class="form-control" id="certificationDescInput" placeholder="证件备注">
+                </div>
+                <div class="form-group">
+                  <label for="certificationEndDate">证件截至日期</label>
+                  <input type="date" class="form-control" id="certificationDateInput" placeholder="证件截至日期">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputFile">证件照片</label>
+                  <input id="certification-fileInput" name="certificationfileInput" multiple type="file" class="file-loading" />
+
+                  <p class="help-block">支持上传多张照片</p>
+                </div>
+                
+              </div>
+              <!-- /.box-body -->
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </form>
+          </div>
+      </div>
+           
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
+
+   
+<!-- 修改模态框（Modal） -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">编辑证件信息</h4>
+            </div>
+            <div class="modal-body">
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form role="form">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="certificationName">证件名称</label>
+                  <input type="text" class="form-control" id="certificationUpdateNameInput" placeholder="证件名称">
+                </div>
+                <div class="form-group">
+                  <label for="certificationDesc">证件备注</label>
+                  <input type="text" class="form-control" id="certificationUpdateDescInput" placeholder="证件备注">
+                </div>
+                <div class="form-group">
+                  <label for="certificationEndDate">证件截至日期</label>
+                  <input type="date" class="form-control" id="certificationUpdateDateInput" placeholder="证件截至日期">
+                </div>  
+                
+                  <input type="text" id="certificationUpdateIdInput" hidden="true">
+               
+              </div>
+              <!-- /.box-body -->
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="updateCertificationButton">更改</button>
+
+            </form>
+          </div>
+      </div>
+           
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
+<style>  
+      .pic {
+        width: 100px;
+        height: 100px;
+      }
+      td{
+        width: 200px;
+        word-break: break-word;
+        vertical-align: middle;
+        overflow: hidden;
+      }
+      caption {
+        text-align: center;
+        font-weight: 900;
+        font-size: 20px; 
+      }
+    
+</style>
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script>
+  $('#del-certification').click(function() {
+    $.ajax({
+      url: 'http://127.0.0.1:3000/personCenter/certification/del',
+      method: 'post',
+      data: {id: $(this).data('id')},
+      success: function(data){
+        if(data == 'ok'){
+          var tr = $('#del-certification').parents('tr');
+          tr.remove();
+        }
+      }
+    });
+  });
+   // initialize with defaults
+
+
+// with plugin options
+$("document").ready(function(){
+
+$("#certification-fileInput").fileinput({
+    uploadUrl: "/certification/file-upload",
+    initialPreviewAsData: false ,
+    allowedFileExtensions: ["jpg", "png", "gif"],
+    uploadExtraData: function() {  // callback example
+        var extra = {};
+        var name = $("#certificationNameInput").val();
+        var desc = $("#certificationDescInput").val();
+        var time = $("#certificationDateInput").val();
+        extra.name=name;
+        extra.desc=desc;
+        extra.time=time;
+
+        return extra;
+    }
+  });
+
+$("#certificationBody").delegate(".CertificaionDelete","click",function(e){
+var target = $(e.target);
+var id = target.data('id');
+ $.ajax({
+      url: 'http://127.0.0.1:3000/certification/delete',
+      method: 'post',
+      data: {id: id},
+    });
+
+
+})
+
+
+$("#certificationBody").delegate(".modify-certification","click",function(e){
+
+var target = $(e.target);
+
+$("#certificationUpdateIdInput").val(target.data('id'));
+$("#certificationUpdateNameInput").val(target.data('name'));
+$("#certificationUpdateDateInput").val(target.data('deadtime'));
+$("#certificationUpdateDescInput").val(target.data('description'));
+
+})
+
+
+$("#updateCertificationButton").click(function(){
+var id =$("#certificationUpdateIdInput").val();
+var name=$("#certificationUpdateNameInput").val();
+var deadtime=$("#certificationUpdateDateInput").val();
+var description=$("#certificationUpdateDescInput").val();
+ $.ajax({
+      url: 'http://127.0.0.1:3000/certification/update',
+      method: 'post',
+      data: {id: id,name:name,description:description,deadtime:deadtime},
+    });
+
+
+
+})
+
+
+
+
+
+})
+
+</script>
+
