@@ -1,0 +1,302 @@
+
+<section class="content-header">
+         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal" >添加亲友信息</button>
+  <div class="box">
+    <div class="box-header">
+      <h3 class="box-title">亲友信息</h3>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+            
+
+      <table class="table table-condensed">
+        <tbody id="updateFriendBody">
+     
+          <tr>
+            <th>姓名</th>
+            <th>关系</th>
+            <th>年龄</th>
+            <th>性别</th>
+            <th>联系方式</th>
+            <th>职位</th>
+            <th>身份证号码</th>
+            <th>出生日期</th>
+            <th>描述</th>
+            <th>操作</th>
+        </tr>
+        {{#each friendMember}}
+          <tr>
+            <td>{{name}}</td>
+            <td>{{relation}}</td>
+            <td>{{age}}</td>
+            <td>{{gender}}</td>
+            <td>{{number}}</td>
+            <td>{{job}}</td>
+            <td>{{certificationID}}</td>
+            <td>{{birthday}}</td>
+            <td>{{description}}</td>
+            <td><button class="btn btn-primary updateModalButton" data-toggle="modal" data-target="#updateModal" data-id="{{id}}" data-name="{{name}}" data-relation="{{relation}}" data-age="{{age}}" data-gender="{{gender}}" data-number="{{number}}" data-job="{{job}}" data-certificationID="{{certificationID}}" data-birthday="{{birthday}}" data-description="{{description}}"> 编辑</button></td>
+          </tr>
+        {{/each}}
+      </tbody>
+      </table>
+    </div>
+    <!-- /.box-body -->
+  </div>
+</section>
+
+            
+<!-- 创建模态框（Modal） -->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">添加亲友信息</h4>
+            </div>
+            <div class="modal-body">
+            <!-- /.box-header -->
+            <!-- form start -->
+              <div class="box-body">
+                <div class="form-group">
+                  <label >姓名</label>
+                  <input type="text" class="form-control" id="friendCreateNameInput" placeholder="亲友姓名">
+                </div>
+                <div class="form-group">
+                  <label >关系</label>
+                  <input type="text" class="form-control" id="friendCreateRelationInput" placeholder="亲友关系">
+                </div>
+                <div class="form-group">
+                  <label >年龄</label>
+                  <input type="text" class="form-control" id="friendCreateAgeInput" placeholder="亲友年龄">
+                </div>  
+                 <div class="form-group">
+                  <label >性别</label>
+                  <input type="text" class="form-control" id="friendCreateSexInput" placeholder="亲友性别">
+                </div>  
+                 <div class="form-group">
+                  <label >联系方式</label>
+                  <input type="text" class="form-control" id="friendCreateMobileInput" placeholder="亲友联系方式">
+                </div>  
+                 <div class="form-group">
+                  <label >职位</label>
+                  <input type="text" class="form-control" id="friendCreateJobInput" placeholder="亲友职位">
+                </div>  
+                 <div class="form-group">
+                  <label >身份证号</label>
+                  <input type="text" class="form-control" id="friendCreateCertificationIdInput" placeholder="亲友身份证号">
+                </div>  
+                 <div class="form-group">
+                  <label >出生日期</label>
+                  <input type="date" class="form-control" id="friendCreateBirthdayInput" placeholder="亲友出生日期">
+                </div>  
+                 <div class="form-group">
+                  <label >描述</label>
+                  <input type="text" class="form-control" id="friendCreateDescInput" placeholder="亲友描述">
+                </div>  
+                
+               
+              </div>
+              <!-- /.box-body -->
+              <div style="text-align: right">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="createFriendButton">添加</button>
+              </div>
+          </div>
+      </div>
+           
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+
+
+
+<!-- 修改模态框（Modal） -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">编辑亲友信息</h4>
+            </div>
+            <div class="modal-body">
+            <!-- /.box-header -->
+            <!-- form start -->
+              <div class="box-body">
+                <div class="form-group">
+                  <label >姓名</label>
+                  <input type="text" class="form-control" id="friendUpdateNameInput" placeholder="亲友姓名">
+                </div>
+                <div class="form-group">
+                  <label >关系</label>
+                  <input type="text" class="form-control" id="friendUpdateRelationInput" placeholder="亲友关系">
+                </div>
+                <div class="form-group">
+                  <label >年龄</label>
+                  <input type="text" class="form-control" id="friendUpdateAgeInput" placeholder="亲友年龄">
+                </div>  
+                 <div class="form-group">
+                  <label >性别</label>
+                  <input type="text" class="form-control" id="friendUpdateSexInput" placeholder="亲友性别">
+                </div>  
+                 <div class="form-group">
+                  <label >联系方式</label>
+                  <input type="text" class="form-control" id="friendUpdateMobileInput" placeholder="亲友联系方式">
+                </div>  
+                 <div class="form-group">
+                  <label >职位</label>
+                  <input type="text" class="form-control" id="friendUpdateJobInput" placeholder="亲友职位">
+                </div>  
+                 <div class="form-group">
+                  <label >身份证号</label>
+                  <input type="text" class="form-control" id="friendUpdateCertificationIdInput" placeholder="亲友身份证号">
+                </div>  
+                 <div class="form-group">
+                  <label >出生日期</label>
+                  <input type="date" class="form-control" id="friendUpdateBirthdayInput" placeholder="亲友出生日期">
+                </div>  
+                 <div class="form-group">
+                  <label >描述</label>
+                  <input type="text" class="form-control" id="friendUpdateDescInput" placeholder="亲友描述">
+                </div>  
+                
+                <input type="text" hidden="true" id="friendUpdateIdInput">
+                
+               
+              </div>
+              <!-- /.box-body -->
+              <div style="text-align: right">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="updateFriendButton">更改</button>
+              </div>
+          </div>
+      </div>
+           
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+
+
+                
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script>
+
+$("document").ready(function(){
+
+$("#createFriendButton").click(function(){
+
+var name = $("#friendCreateNameInput").val();
+var relation = $("#friendCreateRelationInput").val();
+var age = $("#friendCreateAgeInput").val();
+var sex = $("#friendCreateSexInput").val();
+var mobile = $("#friendCreateMobileInput").val();
+var job = $("#friendCreateJobInput").val();
+var certificationId = $("#friendCreateCertificationIdInput").val();
+var birthday = $("#friendCreateBirthdayInput").val();
+var desc = $("#friendCreateDescInput").val();
+
+
+    $.ajax({
+      url: 'http://127.0.0.1:3000/friendCenter/addFriend',
+      method: 'post',
+      data: {
+        name:name,
+        relation:relation,
+        age:age,
+        sex:sex,
+        mobile:mobile,
+        job:job,
+        certificationId:certificationId,
+        birthday:birthday,
+        desc:desc
+      },
+      success: function(data){
+       
+      }
+    });
+
+})
+
+
+$("#updateFriendBody").delegate(".updateModalButton","click",function(e){
+
+var target = $(e.target);
+
+$("#friendUpdateIdInput").val(target.data("id"));
+
+
+$("#friendUpdateNameInput").val(target.data("name"));
+$("#friendUpdateRelationInput").val(target.data("relation"));
+$("#friendUpdateAgeInput").val(target.data("age"));
+$("#friendUpdateSexInput").val(target.data("gender"));
+$("#friendUpdateMobileInput").val(target.data("number"));
+$("#friendUpdateJobInput").val(target.data("job"));
+$("#friendUpdateCertificationIdInput").val(target.data("certificationid"));
+$("#friendUpdateBirthdayInput").val(target.data("birthday"));
+$("#friendUpdateDescInput").val(target.data("description"));
+
+
+
+
+
+})
+
+
+$("#updateFriendButton").click(function(){
+
+
+var name = $("#friendUpdateNameInput").val();
+var relation = $("#friendUpdateRelationInput").val();
+var age = $("#friendUpdateAgeInput").val();
+var sex = $("#friendUpdateSexInput").val();
+var mobile = $("#friendUpdateMobileInput").val();
+var job = $("#friendUpdateJobInput").val();
+var certificationId = $("#friendUpdateCertificationIdInput").val();
+var birthday = $("#friendUpdateBirthdayInput").val();
+var desc = $("#friendUpdateDescInput").val();
+var id= $("#friendUpdateIdInput").val();
+
+
+    $.ajax({
+      url: 'http://127.0.0.1:3000/friendCenter/updateFriend',
+      method: 'post',
+      data: {
+        id:id,
+        name:name,
+        relation:relation,
+        age:age,
+        sex:sex,
+        mobile:mobile,
+        job:job,
+        certificationId:certificationId,
+        birthday:birthday,
+        desc:desc
+      },
+      success: function(data){
+       
+      }
+    });
+
+
+
+
+
+
+})
+
+
+
+
+
+});
+</script>
+
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+          

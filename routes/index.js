@@ -29,6 +29,12 @@ var member = require('../model/familyMember');
 FamilyMember = member.FamyliMember;
 member.setConnection(connection);
 
+//朋友成员
+
+var friend = require('../model/friendMember');
+FriendMember = friend.FriendMember;
+friend.setConnection(connection);
+
 function checkLogin(req, res, next) {
     if(!req.session.user) {
         req.flash('error', '未登录');
@@ -106,7 +112,11 @@ exports.route = function(app) {
                 req.flash('error', "密码不正确");
                 return res.redirect('/login');
             }else{
+
+
                 req.session.user = user;
+                console.log("req.session",req.session.user);
+
                 res.redirect('/home');
             }
         })
@@ -551,7 +561,8 @@ exports.route = function(app) {
     })
 
     app.get('/personCenter/diary', function(req, res) {
-         console.log("1111111111",req);
+        console.log("session",req.session.user);
+          console.log("session.email",req.session.user.email);
         var email = req.session.user.email;
        
         Diary.getByEmail(email, function(err, rows) {
@@ -746,4 +757,81 @@ exports.route = function(app) {
                 userrole: req.session.user.role,
             });       
     });   
+
+   //亲友信息获取
+
+app.get('/friendCenter/friendInfo', function(req, res){
+        var email = req.session.user.email;
+        FamilyMember.getAll(email, function(err,rows) {
+            console.log("rows",rows);
+           res.render('friendMember', {
+                username: req.session.user.name,
+                useremail: req.session.user.email,
+                userrole: req.session.user.role,
+                friendMember:rows
+            });   
+        });
+               
+    }); 
+
+//添加亲友信息
+ app.post('/friendCenter/addFriend',function(req,res){
+  var email = req.session.user.email;
+  var friend = new FriendMember({
+    email:email,
+    name:req.body.name,
+    relation:req.body.relation,
+    age:req.body.age,
+    gender:req.body.sex,
+    description:req.body.desc,
+    job:req.body.job,
+    certificationID:req.body.certificationId,
+    birthday:req.body.birthday,
+    number:req.body.mobile
+  });
+  friend.save(function(err){
+      if(err){
+          res.send(err);
+      }
+      res.redirect("/friendCenter/friendInfo");
+    
+
+  })
+ })   
+
+
+
+ //编辑亲友信息
+
+ app.post('/friendCenter/updateFriend',function(req,res){
+ 
+  var email = req.session.user.email;
+  var friend = new FriendMember({
+    email:email,
+    name:req.body.name,
+    relation:req.body.relation,
+    age:req.body.age,
+    gender:req.body.sex,
+    description:req.body.desc,
+    job:req.body.job,
+    certificationID:req.body.certificationId,
+    birthday:req.body.birthday,
+    number:req.body.mobile
+  });
+
+FriendMember.update(req.body.id,friend,function(err){
+if(err){
+       res.send(err); 
+}
+    res.redirect("/friendCenter/friendInfo");
+
+})
+
+
+
+
+
+ })
+
+
 }

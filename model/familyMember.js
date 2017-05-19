@@ -53,7 +53,7 @@ FamilyMember.deleteMember = function(email, familyMember, callback) {
 }
 
 FamilyMember.getAll = function(email, callback) {
-  connection.query('select * from FamilyMember where email = ?;', [email],
+  connection.query('select * from friendmember where email = ?;', [email],
   function(err, row, fileds) {
     if(err) {
       console.log('getAll by email err:', err);
