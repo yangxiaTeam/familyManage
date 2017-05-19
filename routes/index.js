@@ -737,13 +737,15 @@ exports.route = function(app) {
  //家庭信息
  app.get('/familyCenter/familyMemberInfo', function(req, res){
         var email = req.session.user.email;
-        FamilyMember.getAll(email, function(rows) {
-          console.log('rows', rows);
-        });
-            res.render('familyMember', {
+        console.log('email', email);
+        FamilyMember.getAll(email, function(err,rows) {
+          res.render('familyMember', {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
-            });       
+                familyMember: rows
+            });    
+        });
+               
     });   
 }
