@@ -124,12 +124,15 @@ exports.route = function(app) {
                 req.flash('error', "密码不正确");
                 return res.redirect('/login');
             }else{
-
-
+                
+                Message.getAll(user.email,function(err,messages){
+                req.session.messageCount=messages.length>0?messages.length:null;
                 req.session.user = user;
-                console.log("req.session",req.session.user);
-
                 res.redirect('/home');
+
+                })
+
+
             }
         })
     });
@@ -198,11 +201,14 @@ exports.route = function(app) {
     app.get('/home', checkLogin);
     app.get('/home', function(req, res) {
          systemSendMessage(req.session.user.email);
-        res.render('home', {
+
+          res.render('home', {
             username: req.session.user.name,
             useremail: req.session.user.email,
-            userrole: req.session.user.role
+            userrole: req.session.user.role,
+            messageCount:req.session.messageCount
         });
+    
     });
 
     /**
@@ -246,6 +252,7 @@ exports.route = function(app) {
                     username: req.session.user.name,
                     useremail: req.session.user.email,
                     userrole: req.session.user.role,
+                    messageCount:req.session.messageCount,
                     error: req.flash('error').toString()
                 })
             });
@@ -319,6 +326,7 @@ exports.route = function(app) {
                         username: req.session.user.name,
                         useremail: req.session.user.email,
                         userrole: req.session.user.role,
+                        messageCount:req.session.messageCount,
                         error: req.flash('error').toString()
                     });
                 })
@@ -456,7 +464,8 @@ exports.route = function(app) {
                     users: users,
                     username: req.session.user.name,
                     useremail: req.session.user.email,
-                    userrole: req.session.user.role
+                    userrole: req.session.user.role,
+                    messageCount:req.session.messageCount,
                 })
             });
             return;
@@ -494,7 +503,8 @@ exports.route = function(app) {
                 borrow: borrow,
                 username: req.session.user.name,
                 useremail: req.session.user.email,
-                userrole: req.session.user.role
+                userrole: req.session.user.role,
+                messageCount:req.session.messageCount
             })
         });
     });
@@ -514,7 +524,8 @@ exports.route = function(app) {
                 files: files,
                 username: req.session.user.name,
                 useremail: req.session.user.email,
-                userrole: req.session.user.role
+                userrole: req.session.user.role,
+                messageCount:req.session.messageCount
             });
         });
     })
@@ -527,6 +538,7 @@ exports.route = function(app) {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
+                 messageCount:req.session.messageCount,
                 user: user,
                 mode: 'show',
         });
@@ -557,6 +569,7 @@ exports.route = function(app) {
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
+             messageCount:req.session.messageCount,
             user: JSON.parse(req.session.user.detail),
             mode: 'show',
           });
@@ -568,6 +581,7 @@ exports.route = function(app) {
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
+             messageCount:req.session.messageCount,
             user: user,
             mode: 'edit',
         });
@@ -585,6 +599,7 @@ exports.route = function(app) {
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
+             messageCount:req.session.messageCount,
           });
         });
     });
@@ -593,6 +608,7 @@ exports.route = function(app) {
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
+             messageCount:req.session.messageCount,
         });
     });
     app.post('/personCenter/diary/write', function(req, res) {
@@ -601,6 +617,7 @@ exports.route = function(app) {
             email: req.session.user.email,
             title: req.body.title,
             content: req.body.content,
+             messageCount:req.session.messageCount,
             time: new Date().Format("yyyy-MM-dd HH:mm:ss"),
         });
         diary.save(function(err) {
@@ -634,6 +651,7 @@ exports.route = function(app) {
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
+             messageCount:req.session.messageCount,
             title: row.title,
             content: row.content,
             time: row.time,
@@ -660,6 +678,7 @@ exports.route = function(app) {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
+                 messageCount:req.session.messageCount,
                 certification: rows,
             });
         });
@@ -727,6 +746,7 @@ exports.route = function(app) {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
+                 messageCount:req.session.messageCount,
                 certification: rows,
             });
         });
@@ -747,6 +767,7 @@ exports.route = function(app) {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
+                 messageCount:req.session.messageCount,
                 certification: rows,
             });
         });
@@ -766,6 +787,7 @@ exports.route = function(app) {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
+                 messageCount:req.session.messageCount,
                 familyMember:rows
             }); 
         });
@@ -782,6 +804,7 @@ app.get('/friendCenter/friendInfo', function(req, res){
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
+                 messageCount:req.session.messageCount,
                 friendMember:rows
             });   
         });
@@ -871,6 +894,7 @@ app.post('/friendCenter/deleteFriend',function(req,res){
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
+             messageCount:req.session.messageCount,
           });
         });
     });
@@ -956,6 +980,7 @@ app.post('/friendCenter/deleteFriend',function(req,res){
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
+             messageCount:req.session.messageCount,
           });
 
      })

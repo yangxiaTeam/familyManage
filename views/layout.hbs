@@ -94,64 +94,17 @@ desired effect
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
 
-                    <!-- Messages: style can be found in dropdown.less-->
-                    <li class="dropdown messages-menu">
-                        <!-- Menu toggle button -->
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <i class="fa fa-envelope-o"></i>
-                            <span class="label label-success">1</span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li class="header">你有一条消息</li>
-                            <li>
-                                <!-- inner menu: contains the messages -->
-                                <ul class="menu">
-                                    <li><!-- start message -->
-                                        <a href="#">
-                                            <div class="pull-left">
-                                                <!-- User Image -->
-                                                <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                                            </div>
-                                            <!-- Message title and timestamp -->
-                                            <h4>
-                                                user
-                                                <small><i class="fa fa-clock-o"></i> 5 mins</small>
-                                            </h4>
-                                            <!-- The message -->
-                                            <p>将我升级为manage</p>
-                                        </a>
-                                    </li>
-                                    <!-- end message -->
-                                </ul>
-                                <!-- /.menu -->
-                            </li>
-                            <li class="footer"><a href="#">查看所有消息</a></li>
-                        </ul>
-                    </li>
+                   
                     <!-- /.messages-menu -->
 
                     <!-- Notifications Menu -->
                     <li class="dropdown notifications-menu">
                         <!-- Menu toggle button -->
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <a href="/messageCenter/message" class="dropdown-toggle" >
                             <i class="fa fa-bell-o"></i>
-                            <span class="label label-warning">1</span>
+                            <span class="label label-warning">{{messageCount}}</span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li class="header">你有一个提醒</li>
-                            <li>
-                                <!-- Inner Menu: contains the notifications -->
-                                <ul class="menu">
-                                    <li><!-- start notification -->
-                                        <a href="#">
-                                            <i class="fa fa-users text-aqua"></i> 新注册了5位用户
-                                        </a>
-                                    </li>
-                                    <!-- end notification -->
-                                </ul>
-                            </li>
-                            <li class="footer"><a href="#">查看所有</a></li>
-                        </ul>
+                      
                     </li>
 
                     <li class="dropdown user user-menu">
@@ -174,7 +127,7 @@ desired effect
                             </li>
                             <li class="user-footer">
                                 <div class="pull-left">
-                                    <a href="#" class="btn btn-default btn-flat">个人信息</a>
+                                    <a href="/personCenter/basicInfo" class="btn btn-default btn-flat">个人信息</a>
                                 </div>
                                 <div class="pull-right">
                                     <a href="http://127.0.0.1:3000/logout" class="btn btn-default btn-flat">退出</a>
@@ -238,7 +191,7 @@ desired effect
                         <ul class="treeview-menu">
                             <li class="active"><a href="http://127.0.0.1:3000/familyCenter/familyMemberInfo"><i class="fa fa-circle-thin"></i> <span>家庭信息</span></a></li>
                             <li class="active"><a href="http://127.0.0.1:3000/familyCenter/familyMaterial"><i class="fa fa-circle-thin"></i> <span>家庭资料</span></a></li>
-                            <li class="active"><a href="http://127.0.0.1:3000/familyCenter/familyRemind"><i class="fa fa-circle-thin"></i> <span>家庭消息</span></a></li>
+                            <li class="active"><a href="http://127.0.0.1:3000/messageCenter/message"><i class="fa fa-circle-thin"></i> <span>家庭消息</span></a></li>
                         </ul>
                     </li>
                     <li class="treeview">
@@ -252,7 +205,6 @@ desired effect
                         <ul class="treeview-menu">
                             <li class="active"><a href="http://127.0.0.1:3000/friendCenter/friendInfo"><i class="fa fa-circle-thin"></i> <span>亲友信息</span></a></li>
                             <li class="active"><a href="http://127.0.0.1:3000/friendCenter/interaction"><i class="fa fa-circle-thin"></i> <span>礼仪来往</span></a></li>
-                            <li class="active"><a href="http://127.0.0.1:3000/friendCenter/recentActivity"><i class="fa fa-circle-thin"></i> <span>近期活动</span></a></li>
                             <li class="active"><a href="http://127.0.0.1:3000/messageCenter/message"><i class="fa fa-circle-thin"></i> <span>亲友消息</span></a></li>
                         </ul>
                     </li>
@@ -287,7 +239,7 @@ desired effect
         <div class="pull-right hidden-xs">
         </div>
         <!-- Default to the left -->
-        <strong>Copyright &copy; 2016 <a href="#">LULU AND XIAODEZI</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; 2017 <a href="#">YANG XIA</a></strong> All rights reserved.
     </footer>
 
     <!-- Add the sidebar's background. This div must be placed
