@@ -12,7 +12,10 @@ var settings = require('./settings');
 
 var sessionStore = new MySQLStore(settings.mysqlsettings);
 
+
 var app = express();
+
+
 
 // 自定义handlebars helper
 hbs.registerHelper("equals",function(v1,v2,options){

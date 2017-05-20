@@ -1,0 +1,256 @@
+<section class="content-header">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal" >添加礼仪往来记录</button>
+  <div class="box">
+    <div class="box-header">
+      <h3 class="box-title">礼仪往来记录</h3>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body no-padding">
+            
+  <table class="table table-condensed">
+    <thead>
+      <tr>
+        <th>礼仪往来名称</th>
+        <th>礼仪往来详情</th>
+        <th>相关人员</th>
+        <th>礼仪往来支出</th>
+        <th>礼仪往来收入</th>
+        <th>创建时间</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody id="interactionBody">
+  
+
+      {{#each interaction}}
+        <tr>
+          
+          <td>{{title}}</td>
+          <td>{{content}}</td>
+          <td>{{person}}</td>
+          <td style="color: #008B00;font-size:21px;">-{{outMoney}}元</td>
+          <td style="color: #EE0000;font-size:21px;">+{{inMoney}}元</td>
+          <td>{{createDate}}</td>
+          <td>
+            <button class="btn btn-primary InteractionDelete" data-id="{{id}}" id="del-interaction">删除</button>
+            <button class="btn btn-primary modify-interaction" id="modify-interaction" data-toggle="modal" data-target="#updateModal"  data-id="{{id}}" data-title="{{title}}" data-content="{{content}}"  data-person="{{person}}" data-outmoney="{{outMoney}}" data-inmoney="{{inMoney}}" data-createdate="{{createDate}}">修改</button>
+          </td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+    </div>
+    <!-- /.box-body -->
+  </div>
+</section>
+
+
+
+
+<!-- 创建模态框（Modal） -->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">添加礼仪往来</h4>
+            </div>
+            <div class="modal-body">
+            <!-- /.box-header -->
+            <!-- form start -->
+              <div class="box-body">
+                <div class="form-group">
+                  <label >礼仪往来名称</label>
+                  <input type="text" class="form-control" id="interactionCreateTitleInput" placeholder="礼仪往来名称">
+                </div>
+                <div class="form-group">
+                  <label >礼仪往来详情</label>
+                  <input type="text" class="form-control" id="interactionCreateContentInput" placeholder="礼仪往来详情">
+                </div>
+                <div class="form-group">
+                  <label >相关人员</label>
+                  <input type="text" class="form-control" id="interactionCreatePersonInput" placeholder="相关人员">
+                </div>  
+                <div class="form-group">
+                  <label >礼仪往来支出</label>
+                  <input type="text" class="form-control" id="interactionCreateOutMoneyInput" placeholder="礼仪往来支出">
+                </div>  
+                <div class="form-group">
+                  <label >礼仪往来收入</label>
+                  <input type="text" class="form-control" id="interactionCreateInMoneyInput" placeholder="礼仪往来收入">
+                </div>  
+                <div class="form-group">
+                  <label >时间</label>
+                  <input type="date" class="form-control" id="interactionCreateDateInput" >
+                </div>  
+                
+                
+               
+              </div>
+              <!-- /.box-body -->
+              <div style="text-align: right">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="createInteractionButton">添加</button>
+              </div>
+          </div>
+      </div>
+           
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+
+
+<!-- 编辑模态框（Modal） -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">修改礼仪往来</h4>
+            </div>
+            <div class="modal-body">
+            <!-- /.box-header -->
+            <!-- form start -->
+              <div class="box-body">
+                <div class="form-group">
+                  <label >礼仪往来名称</label>
+                  <input type="text" class="form-control" id="interactionUpdateTitleInput" placeholder="礼仪往来名称">
+                </div>
+                <div class="form-group">
+                  <label >礼仪往来详情</label>
+                  <input type="text" class="form-control" id="interactionUpdateContentInput" placeholder="礼仪往来详情">
+                </div>
+                <div class="form-group">
+                  <label >相关人员</label>
+                  <input type="text" class="form-control" id="interactionUpdatePersonInput" placeholder="相关人员">
+                </div>  
+                <div class="form-group">
+                  <label >礼仪往来支出</label>
+                  <input type="text" class="form-control" id="interactionUpdateOutMoneyInput" placeholder="礼仪往来支出">
+                </div>  
+                <div class="form-group">
+                  <label >礼仪往来收入</label>
+                  <input type="text" class="form-control" id="interactionUpdateInMoneyInput" placeholder="礼仪往来收入">
+                </div>  
+                <div class="form-group">
+                  <label >时间</label>
+                  <input type="date" class="form-control" id="interactionUpdateDateInput" >
+                </div>  
+                <input type="text" hidden="true" id="interactionUpdateIdInput" >  
+
+                
+              </div>
+              <!-- /.box-body -->
+              <div style="text-align: right">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="updateInteractionButton">修改</button>
+              </div>
+          </div>
+      </div>
+           
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script>
+
+
+$("document").ready(function(){
+
+
+$("#createInteractionButton").click(function(){
+
+var title = $("#interactionCreateTitleInput").val();
+var content = $("#interactionCreateContentInput").val();
+var person = $("#interactionCreatePersonInput").val();
+var outMoney = $("#interactionCreateOutMoneyInput").val();
+var inMoney = $("#interactionCreateInMoneyInput").val();
+var time = $("#interactionCreateDateInput").val();
+    $.ajax({
+      url: 'http://127.0.0.1:3000/friendCenter/interaction/create',
+      method: 'post',
+      data: {
+        title:title,
+        content:content,
+        person:person,
+        outMoney:outMoney,
+        inMoney:inMoney,
+        time:time,
+
+      },
+      success: function(data){
+       
+      }
+    });
+
+})
+
+
+$("#interactionBody").delegate(".InteractionDelete","click",function(e){
+
+var target =$(e.target);
+var id = target.data("id");
+$.ajax({
+      url: 'http://127.0.0.1:3000/friendCenter/interaction/delete',
+      method: 'post',
+      data: {
+        id:id
+
+      },
+      success: function(data){
+       
+      }
+    });
+
+    
+})
+
+
+
+$("#interactionBody").delegate(".modify-interaction","click",function(e){
+var target =$(e.target);
+$("#interactionUpdateTitleInput").val(target.data("title"));
+$("#interactionUpdateContentInput").val(target.data("content"));
+$("#interactionUpdatePersonInput").val(target.data("person"));
+$("#interactionUpdateOutMoneyInput").val(target.data("outmoney"));
+$("#interactionUpdateInMoneyInput").val(target.data("inmoney"));
+$("#interactionUpdateDateInput").val(target.data("createdate"));
+$("#interactionUpdateIdInput").val(target.data("id"));
+})
+
+
+$("#updateInteractionButton").click(function(){
+var id = $("#interactionUpdateIdInput").val();
+var title = $("#interactionUpdateTitleInput").val();
+var content = $("#interactionUpdateContentInput").val();
+var person = $("#interactionUpdatePersonInput").val();
+var outMoney = $("#interactionUpdateOutMoneyInput").val();
+var inMoney = $("#interactionUpdateInMoneyInput").val();
+var time = $("#interactionUpdateDateInput").val();
+$.ajax({
+      url: 'http://127.0.0.1:3000/friendCenter/interaction/update',
+      method: 'post',
+      data: {
+        id:id,
+        title:title,
+        content:content,
+        person:person,
+        outMoney:outMoney,
+        inMoney:inMoney,
+        time:time,
+
+      },
+      success: function(data){
+       
+      }
+    });
+
+
+
+
+})
+
+
+
+
+
+})
+</script>

@@ -21,7 +21,7 @@
             <th>职位</th>
             <th>身份证号码</th>
             <th>出生日期</th>
-            <th>描述</th>
+            <th>通信地址</th>
             <th>操作</th>
         </tr>
         {{#each friendMember}}
@@ -35,7 +35,11 @@
             <td>{{certificationID}}</td>
             <td>{{birthday}}</td>
             <td>{{description}}</td>
-            <td><button class="btn btn-primary updateModalButton" data-toggle="modal" data-target="#updateModal" data-id="{{id}}" data-name="{{name}}" data-relation="{{relation}}" data-age="{{age}}" data-gender="{{gender}}" data-number="{{number}}" data-job="{{job}}" data-certificationID="{{certificationID}}" data-birthday="{{birthday}}" data-description="{{description}}"> 编辑</button></td>
+             
+            <td>
+               <button class="btn btn-primary FriendMemberDelete" data-id="{{id}}" >删除</button>
+              <button class="btn btn-primary updateModalButton" data-toggle="modal" data-target="#updateModal" data-id="{{id}}" data-name="{{name}}" data-relation="{{relation}}" data-age="{{age}}" data-gender="{{gender}}" data-number="{{number}}" data-job="{{job}}" data-certificationID="{{certificationID}}" data-birthday="{{birthday}}" data-description="{{description}}"> 编辑</button>
+              </td>
           </tr>
         {{/each}}
       </tbody>
@@ -91,8 +95,8 @@
                   <input type="date" class="form-control" id="friendCreateBirthdayInput" placeholder="亲友出生日期">
                 </div>  
                  <div class="form-group">
-                  <label >描述</label>
-                  <input type="text" class="form-control" id="friendCreateDescInput" placeholder="亲友描述">
+                  <label >通信地址</label>
+                  <input type="text" class="form-control" id="friendCreateDescInput" placeholder="通信地址">
                 </div>  
                 
                
@@ -155,8 +159,8 @@
                   <input type="date" class="form-control" id="friendUpdateBirthdayInput" placeholder="亲友出生日期">
                 </div>  
                  <div class="form-group">
-                  <label >描述</label>
-                  <input type="text" class="form-control" id="friendUpdateDescInput" placeholder="亲友描述">
+                  <label >通信地址</label>
+                  <input type="text" class="form-control" id="friendUpdateDescInput" placeholder="通信地址">
                 </div>  
                 
                 <input type="text" hidden="true" id="friendUpdateIdInput">
@@ -216,6 +220,28 @@ var desc = $("#friendCreateDescInput").val();
 })
 
 
+
+$("#updateFriendBody").delegate(".FriendMemberDelete","click",function(e){
+
+var target =$(e.target);
+var id = target.data("id");
+$.ajax({
+      url: 'http://127.0.0.1:3000/friendCenter/deleteFriend',
+      method: 'post',
+      data: {
+        id:id
+
+      },
+      success: function(data){
+       
+      }
+    });
+
+    
+})
+
+
+
 $("#updateFriendBody").delegate(".updateModalButton","click",function(e){
 
 var target = $(e.target);
@@ -241,7 +267,6 @@ $("#friendUpdateDescInput").val(target.data("description"));
 
 
 $("#updateFriendButton").click(function(){
-
 
 var name = $("#friendUpdateNameInput").val();
 var relation = $("#friendUpdateRelationInput").val();
@@ -276,13 +301,7 @@ var id= $("#friendUpdateIdInput").val();
     });
 
 
-
-
-
-
 })
-
-
 
 
 

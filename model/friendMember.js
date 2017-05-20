@@ -40,8 +40,8 @@ FriendMember.update = function(id, friendMember, callback) {
   });
 }
 
-FriendMember.deleteMember = function(email, friendMember, callback) {
-  connection.query('delete FriendMember where email = ? and relation = ? and name = ?;', [email, friendMember.relation, friendMember.name],
+FriendMember.deleteMember = function(id, callback) {
+  connection.query('delete from FriendMember where id = ? ;', [id],
   function(err, row, fileds) {
     if(err) {
       console.log('delete friendMember err:', err);

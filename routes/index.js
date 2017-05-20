@@ -5,6 +5,7 @@ var connection = require('../model/mysqldb');
 var upload = require('../fileupload');
 var formidable = require('formidable');  
 var crypto = require('crypto');
+var schedule = require("node-schedule");
 require('../Util.js');
 // req.path中如果是中文, 是urlencode编码, 需要转成utf编码
 var urlencode = require('urlencode');
@@ -34,6 +35,17 @@ member.setConnection(connection);
 var friend = require('../model/friendMember');
 FriendMember = friend.FriendMember;
 friend.setConnection(connection);
+
+
+//礼仪往来
+var interaction = require('../model/interaction');
+Interaction = interaction.Interaction;
+interaction.setConnection(connection);
+
+//消息
+var message = require('../model/message');
+Message = message.Message;
+message.setConnection(connection);
 
 function checkLogin(req, res, next) {
     if(!req.session.user) {
@@ -185,6 +197,7 @@ exports.route = function(app) {
 
     app.get('/home', checkLogin);
     app.get('/home', function(req, res) {
+         systemSendMessage(req.session.user.email);
         res.render('home', {
             username: req.session.user.name,
             useremail: req.session.user.email,
@@ -749,13 +762,14 @@ exports.route = function(app) {
  app.get('/familyCenter/familyMemberInfo', function(req, res){
         var email = req.session.user.email;
         FamilyMember.getAll(email, function(rows) {
-          console.log('rows', rows);
-        });
-            res.render('familyMember', {
+         res.render('familyMember', {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
-            });       
+                familyMember:rows
+            }); 
+        });
+                  
     });   
 
    //亲友信息获取
@@ -826,12 +840,293 @@ if(err){
     res.redirect("/friendCenter/friendInfo");
 
 })
+ })
+
+//删除亲友
+
+app.post('/friendCenter/deleteFriend',function(req,res){
+     
+        var id=req.body.id;
+          FriendMember.deleteMember(id,function(err){
+      if(err){
+          res.send(err);
+      }
+      res.redirect("/friendCenter/friendInfo");
+    
+
+  })
+   })
 
 
 
+ //获取礼仪往来
+ app.get('/friendCenter/interaction', function(req, res) {
+     
+        var email = req.session.user.email;
+        Interaction.getAll(email, function(err, rows) {
+          rows = rows ? rows : [];
+          console.log("Interaction ",rows);
+          res.render('interactions', {
+            interaction: rows,
+            username: req.session.user.name,
+            useremail: req.session.user.email,
+            userrole: req.session.user.role,
+          });
+        });
+    });
+
+   //创建礼仪往来
+   app.post('/friendCenter/interaction/create',function(req,res){
+        var email = req.session.user.email;
+        var interaction = new Interaction({
+            title:req.body.title,
+            content:req.body.content,
+            person:req.body.person,
+            outMoney:req.body.outMoney,
+            inMoney:req.body.inMoney,
+            email:email,
+            createDate:req.body.time
+        })
+
+          interaction.save(function(err){
+      if(err){
+          res.send(err);
+      }
+      res.redirect("/friendCenter/interaction");
+    
+
+  })
+   })
+
+
+//修改礼仪往来
+
+  app.post('/friendCenter/interaction/update',function(req,res){
+        var email = req.session.user.email;
+        var id=req.body.id;
+        var interaction = new Interaction({
+            title:req.body.title,
+            content:req.body.content,
+            person:req.body.person,
+            outMoney:req.body.outMoney,
+            inMoney:req.body.inMoney,
+            email:email,
+            createDate:req.body.time
+        })
+
+          Interaction.update(id,interaction,function(err){
+      if(err){
+          res.send(err);
+      }
+      res.redirect("/friendCenter/interaction");
+    
+
+  })
+   })
+
+//删除礼仪往来
+
+
+
+  app.post('/friendCenter/interaction/delete',function(req,res){
+     
+        var id=req.body.id;
+          Interaction.delete(id,function(err){
+      if(err){
+          res.send(err);
+      }
+      res.redirect("/friendCenter/interaction");
+    
+
+  })
+   })
+
+
+ //获取用户消息
+
+
+ app.get('/messageCenter/message',function(req,res){
+
+         var email = req.session.user.email;
+     Message.getAll(email,function(err,rows){
+        rows = rows ? rows : [];
+          console.log("Interaction ",rows);
+          res.render('message', {
+            messages: rows,
+            username: req.session.user.name,
+            useremail: req.session.user.email,
+            userrole: req.session.user.role,
+          });
+
+     })
 
 
  })
 
 
+
+//计算日期差
+function GetNowDateDiff(endDate)  
+
+{  
+
+    var startTime = new Date().getTime();     
+
+    var endTime = new Date(Date.parse(endDate.replace(/-/g,   "/"))).getTime();     
+
+    var dates = (endTime - startTime)/(1000*60*60*24);     
+
+    return  dates;    
+
 }
+
+
+
+//定时任务
+
+function systemSendMessage(email){
+
+var rule = new schedule.RecurrenceRule();
+   var times = [];
+
+　　for(var i=0; i<60; i=i+5){
+
+　　　　times.push(i);
+
+　　}
+    rule.minute=times;
+　  schedule.scheduleJob(rule, function(){
+    //发送亲友生日消息
+     FamilyMember.getAll(email, function(err,rows) {
+
+        rows.map(function(value,index){
+
+            var dates = GetNowDateDiff(value.birthday);
+            if(dates>0&&dates<5){
+                Message.getAll(email,function(merr,messages){
+                                var tag =1;
+                    if(messages.length>0){
+                        messages.map(function(msg,i){
+
+                            if(msg.userId==value.id){
+                                var str = '距离您的好友：'+value.name+'的生日还有'+Math.ceil(dates)+'天！来自【系统消息】';
+                                tag =2;
+                                Message.update(msg.id,str,new Date().Format("yyyy-MM-dd HH:mm:ss"),function(){});
+                                console.log("msg1",str);
+                            }
+                        })
+                    }
+                   if(tag==1){
+                  var str = '距离您的好友：'+value.name+'的生日还有'+Math.ceil(dates)+'天！来自【系统消息】';
+                    var message = new Message({
+            
+                        email:email,
+                        content:str,
+                        userName:value.name,
+                        userId:value.id,
+                        extra:'',
+                        createDate :new Date().Format("yyyy-MM-dd HH:mm:ss"),
+                        updateDate :new Date().Format("yyyy-MM-dd HH:mm:ss")
+
+                    })
+                    message.save(function(err){
+
+                    });
+           
+                }
+
+
+                })
+            }
+        })
+    });
+
+
+    //发送家庭证件日期到期消息
+    Certification.getByEmail(email,function(err,rows){
+    rows.map(function(value,index){
+    var dates = GetNowDateDiff(value.deadtime);
+
+  
+    if(dates>0&&dates<30){
+    Message.getAll(email,function(err,messages){
+        var tag =1;
+        if(messages.length>0){
+            messages.map(function(msg,i){
+
+                if(msg.userId==value.id){
+                    var str = '距离您的证件：'+value.name+'的截止日期还有'+Math.ceil(dates)+'天！请及时办理证件以免带来不必要麻烦。来自【系统消息】';
+                    tag =2;
+                    Message.update(msg.id,str,new Date().Format("yyyy-MM-dd HH:mm:ss"),function(){});
+                }
+            })
+        }
+
+        if(tag==1){
+            var str = '距离您的证件：'+value.name+'的截止日期还有'+Math.ceil(dates)+'天！请及时办理证件以免带来不必要麻烦。来自【系统消息】';
+            var message = new Message({
+                email:email,
+                content:str,
+                userName:value.name,
+                userId:value.id,
+                extra:'',
+                createDate :new Date().Format("yyyy-MM-dd HH:mm:ss"),
+                updateDate :new Date().Format("yyyy-MM-dd HH:mm:ss")
+
+            })
+            message.save(function(err){
+
+            });
+    
+        }
+    })
+}
+
+
+
+        
+    })
+
+    })
+    
+
+
+
+
+
+　　});
+}
+
+
+
+
+
+
+
+
+
+//日期格式化函数
+
+Date.prototype.Format = function (fmt) { //author: meizz 
+    var o = {
+        "M+": this.getMonth() + 1, //月份 
+        "d+": this.getDate(), //日 
+        "H+": this.getHours(), //小时 
+        "m+": this.getMinutes(), //分 
+        "s+": this.getSeconds(), //秒 
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+        "S": this.getMilliseconds() //毫秒 
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
+
+
+
+
+
+}
+
+
