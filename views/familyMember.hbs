@@ -1,6 +1,6 @@
 
 <section class="content-header" id="familyMember-delegate">
-  <button class="btn btn-primary">添加家庭成员</button>
+  <button class="btn btn-primary modify-familyMember" data-toggle="modal" data-target="#familyModal">添加家庭成员</button>
   <div class="box">
     <div class="box-header">
       <h3 class="box-title">家庭成员信息</h3>
@@ -32,10 +32,12 @@
             <td>{{certificationID}}</td>
             <td>{{birthday}}</td>
             <td>{{description}}</td>
-            <td><button data-toggle="modal" data-target="#familyModal" class="btn btn-primary modify-familyMember" data-name="{{name}}" data-relation="{{relation}}" data-age="{{age}}"
+            <td><button data-toggle="modal" data-target="#familyModal" class="btn btn-primary modify-familyMember" data-id={{id}} data-name="{{name}}" data-relation="{{relation}}" data-age="{{age}}"
             data-gender="{{gender}}" data-number="{{number}}" data-job="{{job}}"
             data-certificationID="{{certificationID}}" data-birthday="{{birthday}}" data-description="{{description}}"
-            >修改</button></td>
+            >修改</button>
+            <button class="btn btn-primary deleteFamilyMember" data-id="{{id}}">删除</button>
+            </td>
           </tr>
         {{/each}}
       </tbody>
@@ -56,51 +58,53 @@
             <div class="modal-body">
             <!-- /.box-header -->
             <!-- form start -->
-            <form role="form">
+            <form role="form" action="/familyCenter/familyMemberInfo" method="post">
               <div class="box-body">
                 <div class="form-group">
                   <label for="name">姓名</label>
-                  <input type="text" class="form-control" id="name" placeholder="姓名">
+                  <input type="text" class="form-control" id="name" name="name">
                 </div>
                 <div class="form-group">
                   <label for="relation">关系</label>
-                  <input type="text" class="form-control" id="relation" placeholder="关系">
+                  <input type="text" class="form-control" id="relation" name="relation">
                 </div>
                 <div class="form-group">
                   <label for="age">年龄</label>
-                  <input type="text" class="form-control" id="age" placeholder="年龄">
+                  <input type="text" class="form-control" id="age" name="age">
                 </div> 
                 <div class="form-group">
                   <label for="gender">性别</label>
-                  <input type="text" class="form-control" id="gender" placeholder="性别">
+                  <input type="text" class="form-control" id="gender" name="gender">
                 </div> 
                  <div class="form-group">
                   <label for="number">联系方式</label>
-                  <input type="text" class="form-control" id="number" placeholder="联系方式">
+                  <input type="text" class="form-control" id="number" name="number">
                 </div>
                  <div class="form-group">
                   <label for="job">职位</label>
-                  <input type="text" class="form-control" id="job" placeholder="职位">
+                  <input type="text" class="form-control" id="job" name="job">
                 </div> 
                  <div class="form-group">
                   <label for="certificationID">身份证号码</label>
-                  <input type="text" class="form-control" id="gender" placeholder="身份证号码">
+                  <input type="text" class="form-control" id="certificationID" name="certificationID">
                 </div> 
                  <div class="form-group">
                   <label for="birthday">出生日期</label>
-                  <input type="date" class="form-control" id="birthday" placeholder="出生日期">
+                  <input type="date" class="form-control" id="birthday" name="birthday">
                 </div> 
                  <div class="form-group">
                   <label for="description">描述</label>
-                  <input type="text" class="form-control" id="description" placeholder="描述">
+                  <input type="text" class="form-control" id="description" name="description">
                 </div>  
-                
-                  <input type="text" id="certificationUpdateIdInput" hidden="true">
+                <div class="form-group" style="display: none">
+                  <label for="id">id</label>
+                  <input type="text" class="form-control" id="id" name="id">
+                </div>  
                
               </div>
               <!-- /.box-body -->
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="updateCertificationButton">更改</button>
+                <button type="submit" class="btn btn-default" >确定</button>
 
             </form>
           </div>
@@ -109,11 +113,35 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
 </div>
-
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
 <script>
-  $('#familyMember-delegate').delegate('.modify-familyMember', 'click', function() {
-      
+  $('#familyMember-delegate').delegate('.modify-familyMember', 'click', function(e) {
+      var target = $(e.target);
+      $('#name').val(target.data("name"));
+      $('#relation').val(target.data("relation"));
+      $('#age').val(target.data("age"));
+      $('#gender').val(target.data("gender"));
+      $('#number').val(target.data("number"));
+      $('#job').val(target.data("job"));
+      $('#certificationID').val(target.data("certificationid"));
+      $('#birthday').val(target.data("birthday"));
+      $('#description').val(target.data("description"));
+      $('#id').val(target.data("id"));
   });
+  $('#familyMember-delegate').delegate('.deleteFamilyMember', 'click', function(e) {
+    var target = $(e.target);
+    $.ajax({
+      url: 'http://127.0.0.1:3000/familyCenter/familyMemberInfo/del',
+      method: 'post',
+      data: {id: target.data('id')},
+      success: function(data){
+        if(data == 'ok'){
+          var tr = target.parents('tr');
+          tr.remove();
+        }
+      }
+    });
+  })
 </script>
                 
                 

@@ -237,7 +237,9 @@ desired effect
                         </a>
                         <ul class="treeview-menu">
                             <li class="active"><a href="http://127.0.0.1:3000/familyCenter/familyMemberInfo"><i class="fa fa-circle-thin"></i> <span>家庭信息</span></a></li>
-                            <li class="active"><a href="http://127.0.0.1:3000/familyCenter/familyMaterial"><i class="fa fa-circle-thin"></i> <span>家庭资料</span></a></li>
+                            <li class="active"><a href="http://127.0.0.1:3000/familyCenter/familyHealth"><i class="fa fa-circle-thin"></i> <span>医疗保健</span></a></li>
+                            <li class="active"><a href="http://127.0.0.1:3000/familyCenter/familyMaterial"><i class="fa fa-circle-thin"></i> <span>家庭照片</span></a></li>
+                            <li class="active"><a href="http://127.0.0.1:3000/familyCenter/familyVideo"><i class="fa fa-circle-thin"></i> <span>家庭视频</span></a></li>
                             <li class="active"><a href="http://127.0.0.1:3000/familyCenter/familyRemind"><i class="fa fa-circle-thin"></i> <span>家庭消息</span></a></li>
                         </ul>
                     </li>
@@ -345,9 +347,14 @@ desired effect
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
 <script src="/dist/js/demo.js"></script>
+
+{{!-- 视频播放插件--}}
+<link href="/plugins/video/video-js.min.css" rel="stylesheet" type="text/css">
+<script src="/plugins/video/video.min.js"></script>
 {{!--bootstrap input--}}
 <link href="https://cdn.bootcss.com/bootstrap-fileinput/4.3.9/css/fileinput.min.css" rel="stylesheet">
 <script src="https://cdn.bootcss.com/bootstrap-fileinput/4.3.9/js/fileinput.min.js"></script>
+
 <script>
     $(function () {
         $('#filestable').DataTable();
