@@ -1,0 +1,169 @@
+<section style="position: relative" id="health">
+  <ul id="myTab" class="nav nav-tabs" data-type="{{type}}">
+    <li class="li">
+      <a href="http://127.0.0.1:3000/familyCenter/familyHealth?type=1">病例</a>
+    </li>
+    <li class="li"><a href="http://127.0.0.1:3000/familyCenter/familyHealth?type=2">体检表</a></li>
+    <li class="li"><a href="http://127.0.0.1:3000/familyCenter/familyHealth?type=3">疫苗接种</a></li>
+    <li class="li"><a href="http://127.0.0.1:3000/familyCenter/familyHealth?type=4">药物过敏记录</a></li>
+  </ul>
+  <select id="select-people" style="position: absolute;top: 0px;left: 400px;height: 40px;width: 100px;margin-right: 2px;line-height: 1.42857143;border: 1px solid transparent;border-radius: 4px 4px 0 0;">
+    <option>请选择人员</option>
+    {{#each familyMember}}
+    <option value="{{name}}">{{name}}</option>
+    {{/each}}
+  </select>
+  <button class="btn btn-primary" style="position: absolute;top:0px;right:2px;" id="addHealth" data-toggle="modal" data-target="#myModal" >增加医疗信息</button>
+  <div id="myTabContent" class="tab-content">
+    <div class="tab-pane fade in active" id="home">
+      <table class="table table-hover table-striped">
+    <thead>
+      <tr>
+        <th>名称</th>
+        <th>备注</th>
+        <th>人员</th>
+        <th>详情</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody id="health-body" data-record1={{record1}}>
+      {{#each record}}
+        <tr>
+          <td>{{name}}</td>
+          <td>{{description}}</td>
+          <td class="people">{{people}}</td>
+          <td><a href="{{src}}">查看</a></td>
+          <td>
+            <button class="btn btn-primary del-health" data-id="{{id}}" >删除</button>
+          </td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+    </div>
+    <div class="tab-pane fade" id="ios">
+      <p>iOS 是一个由苹果公司开发和发布的手机操作系统。最初是于 2007 年首次发布 iPhone、iPod Touch 和 Apple 
+        TV。iOS 派生自 OS X，它们共享 Darwin 基础。OS X 操作系统是用在苹果电脑上，iOS 是苹果的移动版本。</p>
+    </div>
+    <div class="tab-pane fade" id="jmeter">
+      <p>jMeter 是一款开源的测试软件。它是 100% 纯 Java 应用程序，用于负载和性能测试。</p>
+    </div>
+    <div class="tab-pane fade" id="ejb">
+      <p>Enterprise Java Beans（EJB）是一个创建高度可扩展性和强大企业级应用程序的开发架构，部署在兼容应用程序服务器（比如 JBOSS、Web Logic 等）的 J2EE 上。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 添加模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">添加医疗保健信息</h4>
+            </div>
+            <div class="modal-body">
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form role="form">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="name">名称</label>
+                  <input type="text" class="form-control" id="name" placeholder="名称" value="">
+                </div>
+                <div class="form-group">
+                  <label for="description">备注</label>
+                  <input type="text" class="form-control" id="description" placeholder="备注" value="">
+                </div>
+                <div class="form-group">
+                  <label for="people">人员</label>
+                  <select name="people" class="form-control" id="people">
+                    {{#each familyMember}}
+                      <option value="{{name}}">{{name}}</option>
+                    {{/each}}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="type">类型</label>
+                  <select name="type" class="form-control" id="type">
+                    <option value="1">病例</option>
+                    <option value="2">体检表</option>
+                    <option value="3">疫苗接种</option>
+                    <option value="4">药物过敏记录</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputFile">证件照片</label>
+                  <input id="certification-fileInput" name="healthFileInput" multiple type="file" class="file-loading" />
+                  <p class="help-block">支持上传多张照片</p>
+                </div>
+                
+              </div>
+              <!-- /.box-body -->
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </form>
+          </div>
+      </div>
+           
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $("#certification-fileInput").fileinput({
+      uploadUrl: "/familyCenter/health-upload",
+      initialPreviewAsData: false ,
+      uploadExtraData: function() {  // callback example
+          var extra = {};
+          var name = $("#name").val();
+          var description = $("#description").val();
+          var people = $("#people").val();
+          var type = $('#type').val();
+          extra.name=name;
+          extra.description=description;
+          extra.people=people;
+          extra.type = type;
+          return extra;
+      }
+    });
+
+    $('#health').delegate('.del-health', 'click', function(e) {
+      var target = $(e.target);
+      $.ajax({
+        url: 'http://127.0.0.1:3000/familyCenter/familyHealth/del',
+        method: 'post',
+        data: {id: target.data('id')},
+        success: function(data){
+          if(data == 'ok'){
+            var tr = target.parents('tr');
+            tr.remove();
+          }
+        }
+      });
+    });
+
+   var type = $('#myTab').data('type');
+   var activeLi = $('li:nth-child('+type+')');
+   activeLi.addClass('active'); 
+
+   $('#select-people').change(function() {
+     var healthBody = $('#health-body');
+     healthBody.empty();
+     var record = healthBody.data('record1').value;    
+     var peopleName = $('#select-people').val();
+     for(var i = 0; i< record.length; i++) {
+       console.log('record[i].people:', record[i].people);
+       if(record[i].people == peopleName) {
+         var rec = record[i];
+         var tr = $('<tr><td>'+rec.name+'</td><td>'+rec.description+'</td><td class="people">'+rec.people+'</td><td><a href="'+rec.src+'">查看</a></td><td><button class="btn btn-primary del-health" data-id="'+rec.id+'" >删除</button></td></tr>');
+         healthBody.append(tr);
+       }
+     }
+  });  
+});
+  
+  
+</script>

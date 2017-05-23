@@ -1,0 +1,80 @@
+<section id="familyMaterial">
+  <button class="btn btn-primary" data-toggle="modal" data-target="#familyPicture" style="margin-top: 10px; margin-bottom: 10px;">上传照片</button>
+  <div class="bs-example" data-example-id="simple-thumbnails">
+    <div class="row" style="margin-bottom: 10px;">
+      {{#each picture}}
+      <div class="col-xs-5 col-md-2 pic-box" style="position: relative">
+        <a href="#" class="thumbnail">
+          <img alt="未找到图片资料" src="{{src}}"  style="height: 180px; width: 100%; display: block;">
+        </a>
+        <div><span>{{date}}</span></div>
+        <div style="position: absolute; top: 0px; right: 20px; color:#003366;">
+          <i class="fa fa-times delete-picture"  data-id="{{id}}" aria-hidden="true"></i>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</section>
+
+<!-- 添加模态框（Modal） -->
+<div class="modal fade" id="familyPicture" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">上传照片</h4>
+            </div>
+            <div class="modal-body">
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form role="form">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="exampleInputFile">证件照片</label>
+                  <input id="certification-fileInput" name="healthFileInput" multiple type="file" class="file-loading" />
+                  <p class="help-block">支持上传多张照片</p>
+                </div>                
+              </div>
+              <!-- /.box-body -->
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </form>
+          </div>
+      </div>
+           
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#familyMaterial').delegate('.delete-picture','click', function(e) {
+      if(confirm('确定删除？')) {
+         var target = $(e.target);
+          var id = target.data('id');
+          console.log('id', id);
+          $.ajax({
+            url: 'http://127.0.0.1:3000/familyCenter/familyMaterial/del',
+            method: 'post',
+            data: {
+              id: id,
+            },
+            success: function(data) {
+              if(data == 'ok') {
+                var picBox = target.parents('.pic-box');
+                picBox.remove();
+              }
+            }
+          });
+      }     
+    });
+
+   $("#certification-fileInput").fileinput({
+      uploadUrl: "/familycenter/familyMaterial/upload",
+      initialPreviewAsData: false ,
+      allowedFileExtensions: ["jpg", "png", "gif"],
+    });
+
+  });
+</script>

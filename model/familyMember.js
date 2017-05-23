@@ -17,7 +17,7 @@ exports.setConnection = function(conn) {
 }
 
 FamilyMember.prototype.save = function(callback) {
-  connection.query('insert into familyMember (email, relation, name, age, description, gender, number, job, certification, birthday) values (?, ?, ?, ?, ?);', [this.email, this.relation, this.name, this.age, this.description], 
+  connection.query('insert into familyMember (email, relation, name, age, description, gender, number, job, certificationID, birthday) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', [this.email, this.relation, this.name, this.age, this.description, this.gender, this.number, this.job, this.certificationID, this.birthday], 
   function(err, row, fileds) {
     if(err) {
       console.log('insert into familyMember err :', err);
@@ -28,8 +28,8 @@ FamilyMember.prototype.save = function(callback) {
   });
 }
 
-FamilyMember.update = function(email, familyMember, callback) {
-  connection.query('update FamyliMember set relation = ?, name = ?, age = ?, description = ?, gender = ?, number = ?, job = ?, certification = ?, birthday = ? where email = ?;', [familyMember.relation, familyMember.name, familyMember.age, familyMember.description,familyMember.gender, familyMember.number, familyMember.job, familyMember.certification, familyMember.birthday, email],
+FamilyMember.update = function(email, id, familyMember, callback) {
+  connection.query('update FamilyMember set relation = ?, name = ?, age = ?, description = ?, gender = ?, number = ?, job = ?, certificationID = ?, birthday = ? where email = ? and id = ?;', [familyMember.relation, familyMember.name, familyMember.age, familyMember.description,familyMember.gender, familyMember.number, familyMember.job, familyMember.certificationID, familyMember.birthday, email, id],
   function(err, row, fileds) {
     if(err) {
       console.log('update familyMember err:', err);
@@ -40,8 +40,8 @@ FamilyMember.update = function(email, familyMember, callback) {
   });
 }
 
-FamilyMember.deleteMember = function(email, familyMember, callback) {
-  connection.query('delete FamyliMember where email = ? and relation = ? and name = ?;', [email, familyMember.relation, familyMember.name],
+FamilyMember.deleteMember = function(email, id, callback) {
+  connection.query('delete from FamilyMember where email = ? and id = ?;', [email, id],
   function(err, row, fileds) {
     if(err) {
       console.log('delete familyMember err:', err);

@@ -19,7 +19,7 @@
           <td>{{description}}</td>
           <td>{{deadtime}}</td>
           <td>
-            <button class="btn btn-primary CertificaionDelete" data-id="{{id}}" id="del-certification">删除</button>
+            <button class="btn btn-primary CertificaionDelete del-certification" data-id="{{id}}" >删除</button>
             <button class="btn btn-primary modify-certification" id="modify-certification" data-toggle="modal" data-target="#updateModal"  data-id="{{id}}" data-name="{{name}}" data-description="{{description}}" data-deadtime="{{deadtime}}">修改</button>
           </td>
         </tr>
@@ -139,19 +139,7 @@
 </style>
 <script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
 <script>
-  $('#del-certification').click(function() {
-    $.ajax({
-      url: 'http://127.0.0.1:3000/personCenter/certification/del',
-      method: 'post',
-      data: {id: $(this).data('id')},
-      success: function(data){
-        if(data == 'ok'){
-          var tr = $('#del-certification').parents('tr');
-          tr.remove();
-        }
-      }
-    });
-  });
+  
    // initialize with defaults
 
 
@@ -170,7 +158,6 @@ $("#certification-fileInput").fileinput({
         extra.name=name;
         extra.desc=desc;
         extra.time=time;
-
         return extra;
     }
   });
@@ -179,9 +166,13 @@ $("#certificationBody").delegate(".CertificaionDelete","click",function(e){
 var target = $(e.target);
 var id = target.data('id');
  $.ajax({
-      url: 'http://127.0.0.1:3000/certification/delete',
+      url: 'http://127.0.0.1:3000/personCenter/certification/del',
       method: 'post',
       data: {id: id},
+      success: function(data) {
+        var tr = target.parents('tr');
+        tr.remove();
+      }
     });
 
 
@@ -210,14 +201,7 @@ var description=$("#certificationUpdateDescInput").val();
       method: 'post',
       data: {id: id,name:name,description:description,deadtime:deadtime},
     });
-
-
-
 })
-
-
-
-
 
 })
 

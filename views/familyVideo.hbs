@@ -1,0 +1,93 @@
+<section style="margin-top:10px;" id="video">
+  <button class="btn btn-primary" data-toggle="modal" data-target="#familyPicture" style="margin-top: 10px; margin-bottom: 10px;">上传视频</button>
+  {{#each video}}
+  <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title">{{title}}</h3>
+
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
+              <i class="fa fa-minus"></i></button>
+            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="" data-original-title="Remove">
+              <i class="fa fa-times delete-video"  data-id="{{id}}"></i></button>
+          </div>
+        </div>
+        <div class="box-body">
+          <div style="margin: 0 auto; width: 650px;">
+             <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264"
+                  poster="http://video-js.zencoder.com/oceans-clip.png"
+                  data-setup="{}">
+                <source src="{{src}}" type='video/mp4' />
+            </video>
+          </div>         
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+          {{date}}
+        </div>
+        <!-- /.box-footer-->
+      </div>
+    {{/each}}
+</section>
+
+<!-- 添加模态框（Modal） -->
+<div class="modal fade" id="familyPicture" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">上传视频</h4>
+            </div>
+            <div class="modal-body">
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form role="form">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="title">标题</label>
+                  <input type="text" class="form-control" id="title" placeholder="标题">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputFile">上传视频</label>
+                  <input id="certification-fileInput" name="healthFileInput" multiple type="file" class="file-loading" />
+                  <p class="help-block">支持上传多个视频</p>
+                </div>                
+              </div>
+              <!-- /.box-body -->
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </form>
+          </div>
+      </div>
+           
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#video').delegate('.delete-video', 'click', function(e) {
+      var target = $(e.target);
+      var id = target.data('id');
+      console.log('id', id);
+      $.ajax({
+        url: 'http://127.0.0.1:3000/familyCenter/familyVideo/del',
+        method: 'post',
+        data: {
+          id: id,
+        }
+      });
+    });
+
+    $("#certification-fileInput").fileinput({
+      uploadUrl: "/familycenter/familyVideo/upload",
+      initialPreviewAsData: false ,
+      uploadExtraData: function() {  // callback example
+          var extra = {};
+          var title = $("#title").val();
+          extra.title=title;
+          return extra;
+      }
+    });
+  });  
+</script>

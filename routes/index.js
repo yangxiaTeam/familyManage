@@ -29,6 +29,18 @@ F.setConnection(connection);
 var member = require('../model/familyMember');
 FamilyMember = member.FamyliMember;
 member.setConnection(connection);
+// 家庭健康
+var health = require('../model/familyHealth');
+FamilyHealth = health.FamilyHealth;
+health.setConnection(connection);
+// 家庭图片
+var picture = require('../model/picture');
+Picture = picture.Picture;
+picture.setConnection(connection);
+// 家庭视频
+var video = require('../model/video');
+Video = video.Video;
+video.setConnection(connection);
 
 //朋友成员
 
@@ -564,7 +576,6 @@ exports.route = function(app) {
           var sessionUser = req.session.user;
           sessionUser.name = user.name;
           sessionUser.detail = JSON.stringify(user.detail);
-          console.log('session.user', req.session.user);
           res.render('personCenterBasicInfo', {
             username: req.session.user.name,
             useremail: req.session.user.email,
@@ -588,8 +599,7 @@ exports.route = function(app) {
     })
 
     app.get('/personCenter/diary', function(req, res) {
-        console.log("session",req.session.user);
-          console.log("session.email",req.session.user.email);
+
         var email = req.session.user.email;
        
         Diary.getByEmail(email, function(err, rows) {
@@ -662,7 +672,6 @@ exports.route = function(app) {
 
     app.post('/personCenter/diary/deleteDiary', function(req, res) {
       var id = req.body.id;
-      console.log('req.body', req.body);
       var email = req.session.user.email;
       Diary.deleteDiary(id, email, function(err, row) {
         if(row.affectedRows == 1) {
@@ -687,7 +696,6 @@ exports.route = function(app) {
     app.post('/personCenter/certification/del', function(req, res) {
         var id = req.body.id;
         var email = req.session.user.email;
-        console.log('22222', id, email);
         Certification.deleteById(id, email, function(err, rows) {
            res.send('ok');
         });
@@ -1107,17 +1115,11 @@ var rule = new schedule.RecurrenceRule();
     })
 }
 
-
-
         
     })
 
     })
     
-
-
-
-
 
 　　});
 }
@@ -1150,8 +1152,220 @@ Date.prototype.Format = function (fmt) { //author: meizz
 
 
 
+  app.post('/familyCenter/familyMemberInfo', function(req, res) {
+      var email = req.session.user.email;
+      if(req.body.id) {
+          var id = parseInt(req.body.id);        
+      }
+     var body = req.body;
+     var member = {
+        relation: body.relation,
+        name: body.name,
+        age: body.age,
+        description: body.description,
+        gender: body.gender,
+        number: body.number,
+        job: body.job,
+        certificationID: body.certificationID,
+        birthday: body.birthday,
+     }
+     if(id) {
+        FamilyMember.update(email, id, member, function(err, row) {
+            if(!err) {
+              res.redirect('/familyCenter/familyMemberInfo');
+            }
+        });
+     } else {
+       member.email = email;
+       var familyMember = new FamilyMember(member);
+       familyMember.save(function() {
+           res.redirect('/familyCenter/familyMemberInfo');
+       });
+     }
+     
+  }); 
+  app.post('/familyCenter/familyMemberInfo/del', function(req, res) {
+      var id = req.body.id;
+      var email = req.session.user.email;
+      FamilyMember.deleteMember(email, id, function(err) {
+        if(!err) {
+            res.send('ok');
+        }
+      });
+  });
+
+  app.get('/familyCenter/familyHealth', function(req, res) {
+      var email = req.session.user.email;
+      var member = [];
+      var type = req.query.type ? req.query.type : '1';
+      FamilyMember.getAll(email, function(err, rows) {
+         rows.map(function(value, index) {
+             member.push(value);
+         });
+         FamilyHealth.getByType(email, type, function(err, rows) {
+            res.render('familyHealth',{
+                username: req.session.user.name,
+                useremail: req.session.user.email,
+                userrole: req.session.user.role,
+                familyMember: member,
+                record: rows,
+                record1: JSON.stringify({value: rows}),
+                type: type,
+            }); 
+         });
+      });          
+  });
 
 
+  app.post('/familyCenter/familyHealth/del', function(req, res) {
+      var id = req.body.id;
+      FamilyHealth.deleteById(id, function(err) {
+        if(!err) {
+            res.send('ok');
+        }
+      });
+  });
+
+  // 健康医疗信息上传
+  app.post('/familyCenter/health-upload',function(req,res){
+        //文件处理配置
+       var form = new formidable.IncomingForm(); 
+       form.encoding = 'utf-8'; //设置编辑  
+       form.uploadDir = 'public/files/FamilyHealth'; //设置上传目录  
+       form.keepExtensions = true; //保留后缀  
+       form.maxFieldsSize = 20 * 1024 * 1024;   //文件大小 k  
+       var name;
+       var description;
+       var people;
+       var imageUrl;
+       var type;
+        //解析上传文件并存储
+        form.parse(req,function(err, fields, files){  
+            if(err) {  
+                res.send(err);  
+                return;  
+            }  
+            name=fields.name;
+            description=fields.description;
+            people=fields.people;
+            type = fields.type;
+            imageUrl=files.healthFileInput.path;
+            imageUrl =imageUrl.substr(6);
+            imageUrl.replace("\\","/");
+            var familyHealth = new FamilyHealth({
+               email: req.session.user.email,
+               src: imageUrl,
+               name: name,
+               description: description,
+               people: people,
+               type: type,
+            });
+            familyHealth.save(function(err) {
+               res.send(files);
+            });             
+        }); 
+    });
+
+    app.get('/familyCenter/familyMaterial',function(req, res) {
+        var email = req.session.user.email;
+        Picture.getAll(email, function(err,rows) {
+          res.render('familyMaterial', {
+                username: req.session.user.name,
+                useremail: req.session.user.email,
+                userrole: req.session.user.role,
+                picture: rows,
+            });
+        });
+        
+    });
+   
+    app.post('/familycenter/familyMaterial/upload', function(req, res) {
+       var form = new formidable.IncomingForm(); 
+       form.encoding = 'utf-8'; //设置编辑  
+       form.uploadDir = 'public/files/Picture'; //设置上传目录  
+       form.keepExtensions = true; //保留后缀  
+       form.maxFieldsSize = 20 * 1024 * 1024;   //文件大小 k
+       form.parse(req,function(err, fields, files){  
+            if(err) {  
+                res.send(err);  
+                return;  
+            }  
+            imageUrl=files.healthFileInput.path;
+            imageUrl =imageUrl.substr(6);
+            imageUrl.replace("\\","/");
+            var picture  = new Picture({
+                src: imageUrl,
+                date: new Date().Format("yyyy-MM-dd HH:mm:ss"),
+                email: req.session.user.email,
+            });
+            picture.save(function(err) {
+                if(!err) {
+                    res.send(files);
+                }
+            });    
+        }); 
+    });
+
+    app.post('/familyCenter/familyMaterial/del', function(req, res) {
+        var id = req.body.id;
+        console.log('idddd', id);
+        Picture.deleteById(id, function(err) {
+            if(err) return res.send(err);
+            res.send('ok');
+        });
+    });
+    
+    // 家庭视频
+    app.get('/familyCenter/familyVideo',function(req, res) {
+        var email = req.session.user.email;
+        Video.getAll(email, function(err, rows) {
+           res.render('familyVideo', {
+                username: req.session.user.name,
+                useremail: req.session.user.email,
+                userrole: req.session.user.role,
+                video: rows,
+            });
+        });      
+    });
+
+    app.post('/familyCenter/familyVideo/del', function(req, res) {
+        var id = req.body.id;
+        console.log('0000000id', id);
+        Video.deleteById(id, function(err) {
+            if(!err) {
+                return res.send('ok');
+            }
+            res.send('failed');
+        });
+    });
+
+    app.post('/familycenter/familyVideo/upload', function(req, res) {
+       var form = new formidable.IncomingForm(); 
+       form.encoding = 'utf-8'; //设置编辑  
+       form.uploadDir = 'public/files/Video'; //设置上传目录  
+       form.keepExtensions = true; //保留后缀  
+       form.maxFieldsSize = 20 * 1024 * 1024;   //文件大小 k
+       form.parse(req,function(err, fields, files){  
+            if(err) {  
+                res.send(err);  
+                return;  
+            }
+            var title = fields.title;
+            console.log('fileds', fields);
+            imageUrl=files.healthFileInput.path;
+            imageUrl =imageUrl.substr(6);
+            imageUrl.replace("\\","/");
+            var video  = new Video({
+                src: imageUrl,
+                date: new Date().Format("yyyy-MM-dd HH:mm:ss"),
+                email: req.session.user.email,
+                title: title,
+            });
+            video.save(function(err) {
+                if(!err) {
+                    res.send(files);
+                }
+            });    
+        }); 
+    });
 }
-
-
