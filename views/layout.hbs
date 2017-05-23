@@ -7,7 +7,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>档案管理系统</title>
+    <title>家庭帮</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.6 -->
@@ -80,7 +80,7 @@ desired effect
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini"><b>F</b>M</span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>File</b>Manager</span>
+            <span class="logo-lg"><b>家庭帮</b></span>
         </a>
 
         <!-- Header Navbar -->
@@ -99,7 +99,7 @@ desired effect
                     <!-- Notifications Menu -->
                     <li class="dropdown notifications-menu">
                         <!-- Menu toggle button -->
-                        <a href="/messageCenter/message" class="dropdown-toggle" >
+                        <a href="/messageCenter/message" class="dropdown-toggle" id="messageRemind">
                             <i class="fa fa-bell-o"></i>
                             <span class="label label-warning">{{messageCount}}</span>
                         </a>
@@ -193,7 +193,7 @@ desired effect
                             <li class="active"><a href="http://127.0.0.1:3000/familyCenter/familyHealth"><i class="fa fa-circle-thin"></i> <span>医疗保健</span></a></li>
                             <li class="active"><a href="http://127.0.0.1:3000/familyCenter/familyMaterial"><i class="fa fa-circle-thin"></i> <span>家庭照片</span></a></li>
                             <li class="active"><a href="http://127.0.0.1:3000/familyCenter/familyVideo"><i class="fa fa-circle-thin"></i> <span>家庭视频</span></a></li>
-                            <li class="active"><a href="http://127.0.0.1:3000/familyCenter/familyRemind"><i class="fa fa-circle-thin"></i> <span>家庭消息</span></a></li>
+                            <li class="active"><a href="http://127.0.0.1:3000/messageCenter/message"><i class="fa fa-circle-thin"></i> <span>家庭消息</span></a></li>
                         </ul>
                     </li>
                     <li class="treeview">
@@ -312,6 +312,28 @@ desired effect
         $('#filestable').DataTable();
     });
  
+
+$("document").ready(function(){
+
+$("#messageRemind").click(function(){
+
+$.ajax({
+      url: 'http://127.0.0.1:3000/message/remove/count',
+      method: 'get',
+      success: function(data){
+      
+      }
+    });
+
+})
+
+
+
+})
+
+
+
+
 </script>
 
 </body>

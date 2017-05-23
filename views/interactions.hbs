@@ -196,7 +196,9 @@ $.ajax({
 
       },
       success: function(data){
-       
+        if(data=='ok'){
+       target.parents("tr").remove();
+        }
       }
     });
 

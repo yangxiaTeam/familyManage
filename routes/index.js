@@ -790,12 +790,12 @@ exports.route = function(app) {
  //家庭信息
  app.get('/familyCenter/familyMemberInfo', function(req, res){
         var email = req.session.user.email;
-        FamilyMember.getAll(email, function(rows) {
+        FamilyMember.getAll(email, function(err,rows) {
          res.render('familyMember', {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
-                 messageCount:req.session.messageCount,
+                messageCount:req.session.messageCount,
                 familyMember:rows
             }); 
         });
@@ -806,8 +806,7 @@ exports.route = function(app) {
 
 app.get('/friendCenter/friendInfo', function(req, res){
         var email = req.session.user.email;
-        FamilyMember.getAll(email, function(err,rows) {
-            console.log("rows",rows);
+        FriendMember.getAll(email, function(err,rows) {
            res.render('friendMember', {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
@@ -881,8 +880,10 @@ app.post('/friendCenter/deleteFriend',function(req,res){
           FriendMember.deleteMember(id,function(err){
       if(err){
           res.send(err);
+      }else{
+      res.send("ok");
+
       }
-      res.redirect("/friendCenter/friendInfo");
     
 
   })
@@ -967,7 +968,9 @@ app.post('/friendCenter/deleteFriend',function(req,res){
       if(err){
           res.send(err);
       }
-      res.redirect("/friendCenter/interaction");
+      else{
+          res.send("ok");
+      }
     
 
   })
@@ -988,8 +991,8 @@ app.post('/friendCenter/deleteFriend',function(req,res){
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
-             messageCount:req.session.messageCount,
           });
+          req.session.user.messageCount=null;
 
      })
 
@@ -1030,7 +1033,7 @@ var rule = new schedule.RecurrenceRule();
     rule.minute=times;
 　  schedule.scheduleJob(rule, function(){
     //发送亲友生日消息
-     FamilyMember.getAll(email, function(err,rows) {
+     FriendMember.getAll(email, function(err,rows) {
 
         rows.map(function(value,index){
 
@@ -1045,7 +1048,6 @@ var rule = new schedule.RecurrenceRule();
                                 var str = '距离您的好友：'+value.name+'的生日还有'+Math.ceil(dates)+'天！来自【系统消息】';
                                 tag =2;
                                 Message.update(msg.id,str,new Date().Format("yyyy-MM-dd HH:mm:ss"),function(){});
-                                console.log("msg1",str);
                             }
                         })
                     }
@@ -1368,4 +1370,7 @@ Date.prototype.Format = function (fmt) { //author: meizz
             });    
         }); 
     });
+
+
+
 }
