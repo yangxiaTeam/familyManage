@@ -59,6 +59,8 @@ var message = require('../model/message');
 Message = message.Message;
 message.setConnection(connection);
 
+var notReadMessage = {};
+
 function checkLogin(req, res, next) {
     if(!req.session.user) {
         req.flash('error', '未登录');
@@ -135,20 +137,16 @@ exports.route = function(app) {
             if(user.password != md5password) {
                 req.flash('error', "密码不正确");
                 return res.redirect('/login');
-            }else{
-                
-                Message.getAll(user.email,function(err,messages){
-                req.session.messageCount=messages.length>0?messages.length:null;
+            }else{               
+                Message.getNotReaded(user.email,function(err,rows){
+                notReadMessage[user.email] = rows.length;
                 req.session.user = user;
+                systemSendMessage(req.session.user.email);
                 res.redirect('/home');
-
-                })
-
-
+                }) 
             }
         })
     });
-
     app.get('/register', checkNotLogin);
     app.get('/register', function(req, res) {
         res.render('register', {
@@ -212,13 +210,11 @@ exports.route = function(app) {
 
     app.get('/home', checkLogin);
     app.get('/home', function(req, res) {
-         systemSendMessage(req.session.user.email);
-
           res.render('home', {
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
-            messageCount:req.session.messageCount
+            messageCount:notReadMessage[req.session.user.email],
         });
     
     });
@@ -264,7 +260,7 @@ exports.route = function(app) {
                     username: req.session.user.name,
                     useremail: req.session.user.email,
                     userrole: req.session.user.role,
-                    messageCount:req.session.messageCount,
+                    messageCount:notReadMessage[req.session.user.email],
                     error: req.flash('error').toString()
                 })
             });
@@ -338,7 +334,7 @@ exports.route = function(app) {
                         username: req.session.user.name,
                         useremail: req.session.user.email,
                         userrole: req.session.user.role,
-                        messageCount:req.session.messageCount,
+                        messageCount:notReadMessage[req.session.user.email],
                         error: req.flash('error').toString()
                     });
                 })
@@ -477,7 +473,7 @@ exports.route = function(app) {
                     username: req.session.user.name,
                     useremail: req.session.user.email,
                     userrole: req.session.user.role,
-                    messageCount:req.session.messageCount,
+                    messageCount:notReadMessage[req.session.user.email],
                 })
             });
             return;
@@ -516,7 +512,7 @@ exports.route = function(app) {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
-                messageCount:req.session.messageCount
+                messageCount:notReadMessage[req.session.user.email]
             })
         });
     });
@@ -537,7 +533,7 @@ exports.route = function(app) {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
-                messageCount:req.session.messageCount
+                messageCount:notReadMessage[req.session.user.email]
             });
         });
     })
@@ -545,12 +541,12 @@ exports.route = function(app) {
     app.get('/jieyue', checkLogin);
     app.get('/jieyue', checkRoleManage);
     app.get('/personCenter/basicInfo', function(req,res){ 
-        var user = JSON.parse(req.session.user.detail || "{}");       
+        var user = JSON.parse(req.session.user.detail || "{}"); 
         res.render('personCenterBasicInfo', {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
-                 messageCount:req.session.messageCount,
+                 messageCount:notReadMessage[req.session.user.email],
                 user: user,
                 mode: 'show',
         });
@@ -580,7 +576,7 @@ exports.route = function(app) {
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
-             messageCount:req.session.messageCount,
+             messageCount:notReadMessage[req.session.user.email],
             user: JSON.parse(req.session.user.detail),
             mode: 'show',
           });
@@ -592,7 +588,7 @@ exports.route = function(app) {
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
-             messageCount:req.session.messageCount,
+             messageCount:notReadMessage[req.session.user.email],
             user: user,
             mode: 'edit',
         });
@@ -609,7 +605,7 @@ exports.route = function(app) {
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
-             messageCount:req.session.messageCount,
+             messageCount:notReadMessage[req.session.user.email],
           });
         });
     });
@@ -618,7 +614,7 @@ exports.route = function(app) {
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
-             messageCount:req.session.messageCount,
+             messageCount:notReadMessage[req.session.user.email],
         });
     });
     app.post('/personCenter/diary/write', function(req, res) {
@@ -627,7 +623,7 @@ exports.route = function(app) {
             email: req.session.user.email,
             title: req.body.title,
             content: req.body.content,
-             messageCount:req.session.messageCount,
+             messageCount:notReadMessage[req.session.user.email],
             time: new Date().Format("yyyy-MM-dd HH:mm:ss"),
         });
         diary.save(function(err) {
@@ -661,7 +657,7 @@ exports.route = function(app) {
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
-             messageCount:req.session.messageCount,
+             messageCount:notReadMessage[req.session.user.email],
             title: row.title,
             content: row.content,
             time: row.time,
@@ -687,7 +683,7 @@ exports.route = function(app) {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
-                 messageCount:req.session.messageCount,
+                messageCount:notReadMessage[req.session.user.email],
                 certification: rows,
             });
         });
@@ -754,7 +750,7 @@ exports.route = function(app) {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
-                 messageCount:req.session.messageCount,
+                 messageCount:notReadMessage[req.session.user.email],
                 certification: rows,
             });
         });
@@ -775,7 +771,7 @@ exports.route = function(app) {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
-                 messageCount:req.session.messageCount,
+                 messageCount:notReadMessage[req.session.user.email],
                 certification: rows,
             });
         });
@@ -795,7 +791,7 @@ exports.route = function(app) {
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
-                messageCount:req.session.messageCount,
+                messageCount:notReadMessage[req.session.user.email],
                 familyMember:rows
             }); 
         });
@@ -811,7 +807,7 @@ app.get('/friendCenter/friendInfo', function(req, res){
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
-                 messageCount:req.session.messageCount,
+                 messageCount:notReadMessage[req.session.user.email],
                 friendMember:rows
             });   
         });
@@ -897,13 +893,12 @@ app.post('/friendCenter/deleteFriend',function(req,res){
         var email = req.session.user.email;
         Interaction.getAll(email, function(err, rows) {
           rows = rows ? rows : [];
-          console.log("Interaction ",rows);
           res.render('interactions', {
             interaction: rows,
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
-             messageCount:req.session.messageCount,
+             messageCount:notReadMessage[req.session.user.email],
           });
         });
     });
@@ -981,22 +976,20 @@ app.post('/friendCenter/deleteFriend',function(req,res){
 
 
  app.get('/messageCenter/message',function(req,res){
-
          var email = req.session.user.email;
-     Message.getAll(email,function(err,rows){
+        Message.getAll(email,function(err,rows){
         rows = rows ? rows : [];
-          console.log("Interaction ",rows);
-          res.render('message', {
+        notReadMessage[req.session.user.email]= 0;
+        Message.changeAllToTrue(email, function() {
+           res.render('message', {
             messages: rows,
             username: req.session.user.name,
             useremail: req.session.user.email,
             userrole: req.session.user.role,
+            messageCount:notReadMessage[req.session.user.email],
           });
-          req.session.user.messageCount=null;
-
+        });
      })
-
-
  })
 
 
@@ -1021,18 +1014,20 @@ function GetNowDateDiff(endDate)
 //定时任务
 
 function systemSendMessage(email){
-
 var rule = new schedule.RecurrenceRule();
    var times = [];
 
-　　for(var i=0; i<60; i=i+5){
+　　for(var i=0; i<60; i=i+1){
 
 　　　　times.push(i);
 
 　　}
+  var obj = {a: 1};
     rule.minute=times;
 　  schedule.scheduleJob(rule, function(){
     //发送亲友生日消息
+    console.log('job start---------');
+    var count = 0;
      FriendMember.getAll(email, function(err,rows) {
 
         rows.map(function(value,index){
@@ -1040,40 +1035,42 @@ var rule = new schedule.RecurrenceRule();
             var dates = GetNowDateDiff(value.birthday);
             if(dates>0&&dates<5){
                 Message.getAll(email,function(merr,messages){
-                                var tag =1;
+                    var flag = 1;
                     if(messages.length>0){
                         messages.map(function(msg,i){
-
                             if(msg.userId==value.id){
-                                var str = '距离您的好友：'+value.name+'的生日还有'+Math.ceil(dates)+'天！来自【系统消息】';
-                                tag =2;
-                                Message.update(msg.id,str,new Date().Format("yyyy-MM-dd HH:mm:ss"),function(){});
+                                flag = 2;
+                                Message.getContentByUserId(value.id, function(err, row) {
+                                  var str = '距离您的好友：'+value.name+'的生日还有'+Math.ceil(dates)+'天！来自【系统消息】';                                   
+                                    if(row[0].content != str) {
+                                        Message.update(msg.id,str,new Date().Format("yyyy-MM-dd HH:mm:ss"),'false',function(){});
+                                        notReadMessage[email]++;
+                                    }    
+                                });                
                             }
                         })
                     }
-                   if(tag==1){
-                  var str = '距离您的好友：'+value.name+'的生日还有'+Math.ceil(dates)+'天！来自【系统消息】';
-                    var message = new Message({
-            
+                   if(flag == 1){
+                    var str = '距离您的好友：'+value.name+'的生日还有'+Math.ceil(dates)+'天！来自【系统消息】';
+                    var message = new Message({            
                         email:email,
                         content:str,
                         userName:value.name,
                         userId:value.id,
                         extra:'',
+                        isReaded: 'false',
                         createDate :new Date().Format("yyyy-MM-dd HH:mm:ss"),
                         updateDate :new Date().Format("yyyy-MM-dd HH:mm:ss")
-
                     })
                     message.save(function(err){
-
+                        
                     });
-           
+                   notReadMessage[email]++;
                 }
-
-
                 })
             }
         })
+        
     });
 
 
@@ -1085,34 +1082,42 @@ var rule = new schedule.RecurrenceRule();
   
     if(dates>0&&dates<30){
     Message.getAll(email,function(err,messages){
-        var tag =1;
+        var flag = 1;
         if(messages.length>0){
             messages.map(function(msg,i){
-
-                if(msg.userId==value.id){
-                    var str = '距离您的证件：'+value.name+'的截止日期还有'+Math.ceil(dates)+'天！请及时办理证件以免带来不必要麻烦。来自【系统消息】';
-                    tag =2;
-                    Message.update(msg.id,str,new Date().Format("yyyy-MM-dd HH:mm:ss"),function(){});
+                if(msg.extra==value.id){
+                     flag = 2;
+                    Message.getContentByExtraId(value.id, function(err, row) {
+                      var str = '距离您的证件：'+value.name+'的截止日期还有'+Math.ceil(dates)+'天！请及时办理证件以免带来不必要麻烦。来自【系统消息】';                      
+                        console.log('row[0].content == str', row[0].content == str);
+                        console.log('row[0].content', row[0].content);
+                        console.log('str', str);
+                        if(row[0].content != str) {
+                            Message.update(msg.id,str,new Date().Format("yyyy-MM-dd HH:mm:ss"),'false',function(){});
+                           notReadMessage[email]++;
+                        } 
+                    });
+                                      
                 }
             })
         }
 
-        if(tag==1){
+        if(flag == 1) {
             var str = '距离您的证件：'+value.name+'的截止日期还有'+Math.ceil(dates)+'天！请及时办理证件以免带来不必要麻烦。来自【系统消息】';
             var message = new Message({
                 email:email,
                 content:str,
                 userName:value.name,
-                userId:value.id,
-                extra:'',
+                userId:'',
+                extra:value.id,
+                isReaded: 'false',
                 createDate :new Date().Format("yyyy-MM-dd HH:mm:ss"),
                 updateDate :new Date().Format("yyyy-MM-dd HH:mm:ss")
-
             })
             message.save(function(err){
-
+                              
             });
-    
+            notReadMessage[email]++; 
         }
     })
 }
@@ -1122,7 +1127,7 @@ var rule = new schedule.RecurrenceRule();
 
     })
     
-
+  
 　　});
 }
 
@@ -1209,6 +1214,7 @@ Date.prototype.Format = function (fmt) { //author: meizz
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
+                messageCount:notReadMessage[req.session.user.email],
                 familyMember: member,
                 record: rows,
                 record1: JSON.stringify({value: rows}),
@@ -1275,6 +1281,7 @@ Date.prototype.Format = function (fmt) { //author: meizz
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
+                messageCount:notReadMessage[req.session.user.email],
                 picture: rows,
             });
         });
@@ -1310,7 +1317,6 @@ Date.prototype.Format = function (fmt) { //author: meizz
 
     app.post('/familyCenter/familyMaterial/del', function(req, res) {
         var id = req.body.id;
-        console.log('idddd', id);
         Picture.deleteById(id, function(err) {
             if(err) return res.send(err);
             res.send('ok');
@@ -1325,6 +1331,7 @@ Date.prototype.Format = function (fmt) { //author: meizz
                 username: req.session.user.name,
                 useremail: req.session.user.email,
                 userrole: req.session.user.role,
+                messageCount: notReadMessage[req.session.user.email],
                 video: rows,
             });
         });      
@@ -1332,7 +1339,6 @@ Date.prototype.Format = function (fmt) { //author: meizz
 
     app.post('/familyCenter/familyVideo/del', function(req, res) {
         var id = req.body.id;
-        console.log('0000000id', id);
         Video.deleteById(id, function(err) {
             if(!err) {
                 return res.send('ok');
@@ -1353,7 +1359,6 @@ Date.prototype.Format = function (fmt) { //author: meizz
                 return;  
             }
             var title = fields.title;
-            console.log('fileds', fields);
             imageUrl=files.healthFileInput.path;
             imageUrl =imageUrl.substr(6);
             imageUrl.replace("\\","/");
@@ -1371,6 +1376,13 @@ Date.prototype.Format = function (fmt) { //author: meizz
         }); 
     });
 
-
+  app.get('/aboutus', function(req, res) {
+      res.render('aboutUs', {
+        username: req.session.user.name,
+        useremail: req.session.user.email,
+        userrole: req.session.user.role,
+        messageCount: notReadMessage[req.session.user.email],
+      });
+  });
 
 }

@@ -176,7 +176,7 @@ desired effect
                             <li class="active"><a href="http://127.0.0.1:3000/personCenter/basicInfo"><i class="fa fa-circle-thin"></i> <span>基本信息</span></a></li>
                             <li class="active"><a href="http://127.0.0.1:3000/personCenter/diary"><i class="fa fa-circle-thin"></i> <span>我的日记</span></a></li>
                             <li class="active"><a href="http://127.0.0.1:3000/personCenter/certification"><i class="fa fa-circle-thin"></i> <span>我的证件</span></a></li>
-                            <li class="active"><a href="http://127.0.0.1:3000/personCenter/myRemind"><i class="fa fa-circle-thin"></i> <span>我的消息</span></a></li>
+                            <li class="active"><a href="http://127.0.0.1:3000/messageCenter/message"><i class="fa fa-circle-thin"></i> <span>我的消息</span></a></li>
                         </ul>
                     </li>
                     <li class="treeview">
@@ -210,7 +210,7 @@ desired effect
                             <li class="active"><a href="http://127.0.0.1:3000/messageCenter/message"><i class="fa fa-circle-thin"></i> <span>亲友消息</span></a></li>
                         </ul>
                     </li>
-                    <li class="active"><a href="http://127.0.0.1:3000/aboutour"><i class="fa fa-circle-thin"></i> <span>关于我们</span></a></li>
+                    <li class="active"><a href="http://127.0.0.1:3000/aboutus"><i class="fa fa-circle-thin"></i> <span>关于我们</span></a></li>
                 {{/equals}}
 
                 {{#equals userrole 'manager'}}
@@ -241,7 +241,7 @@ desired effect
         <div class="pull-right hidden-xs">
         </div>
         <!-- Default to the left -->
-        <strong>Copyright &copy; 2017 <a href="#">YANG XIA</a></strong> All rights reserved.
+        <strong>Copyright &copy; 2017 <a href="#">yang xia</a></strong> All rights reserved.
     </footer>
 
     <!-- Add the sidebar's background. This div must be placed
@@ -317,18 +317,12 @@ $("document").ready(function(){
 
 $("#messageRemind").click(function(){
 
-$.ajax({
-      url: 'http://127.0.0.1:3000/message/remove/count',
-      method: 'get',
-      success: function(data){
-      
-      }
-    });
+    $.ajax({
+        url: 'http://127.0.0.1:3000/message/remove/count',
+        method: 'get'
+        });
 
-})
-
-
-
+    })
 })
 
 
